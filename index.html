@@ -1,103 +1,54 @@
 <!DOCTYPE html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reemmy</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Spline+Sans:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-[#221122] text-white font-sans" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Reemmy - Вход</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Добро пожаловать в Reemmy</h1>
 
-    <!-- Логотип и описание -->
-    <section class="text-center py-8 px-4 bg-[#2d1433]">
-      <h1 class="text-4xl font-extrabold mb-2">Reemmy</h1>
-      <p class="text-lg text-gray-200">Платформа, где вы зарабатываете на видео даже с 1000 подписчиков.</p>
-    </section>
+  <div class="form">
+    <input id="email" type="email" placeholder="Почта" /><br />
+    <input id="password" type="password" placeholder="Пароль" /><br />
+    <button id="loginBtn">Войти</button>
+    <button id="registerBtn">Регистрация</button>
+  </div>
 
-    <!-- Форма -->
-    <div id="authPage" class="min-h-screen flex items-center justify-center p-4">
-      <div class="bg-[#2a1530] text-white rounded-xl p-6 w-full max-w-sm space-y-4 shadow-lg">
-        <h2 class="text-2xl font-bold text-center" id="formTitle">Регистрация</h2>
+  <script type="module">
+    import {
+      auth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from './firebase.js';
 
-        <div id="regFields">
-          <input type="text" id="name" placeholder="Имя" class="bg-white text-black border px-3 py-2 w-full rounded" />
-          <input type="text" id="telegram" placeholder="Telegram (связь)" class="bg-white text-black border px-3 py-2 w-full rounded" />
-        </div>
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
 
-        <input type="email" id="email" placeholder="Электронная почта" class="bg-white text-black border px-3 py-2 w-full rounded" />
-        <input type="password" id="password" placeholder="Пароль" class="bg-white text-black border px-3 py-2 w-full rounded" />
+    loginBtn.onclick = async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        location.href = 'main.html';
+      } catch (e) {
+        alert('Ошибка входа: ' + e.message);
+      }
+    };
 
-        <button onclick="handleAuth()" class="w-full bg-[#ee2bee] hover:bg-[#d01acb] text-white py-2 rounded font-bold">Продолжить</button>
+    registerBtn.onclick = async () => {
+      try {
+        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        location.href = 'main.html';
+      } catch (e) {
+        alert('Ошибка регистрации: ' + e.message);
+      }
+    };
 
-        <p class="text-center text-sm" id="switchText">
-          Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Войти</a>
-        </p>
-      </div>
-    </div>
-
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyDCAsvKNtfZqN7wlvDMV_sI8Hn-6cYoGr4",
-        authDomain: "reemmy-fdnbf276454rfgh-1.firebaseapp.com",
-        databaseURL: "https://reemmy-fdnbf276454rfgh-1-default-rtdb.firebaseio.com",
-        projectId: "reemmy-fdnbf276454rfgh-1",
-        storageBucket: "reemmy-fdnbf276454rfgh-1.appspot.com",
-        messagingSenderId: "1013780844206",
-        appId: "1:1013780844206:web:7fc8af82eecf80ee04673f"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getDatabase(app);
-
-      let isRegistering = true;
-
-      window.toggleForm = () => {
-        isRegistering = !isRegistering;
-        document.getElementById("formTitle").innerText = isRegistering ? "Регистрация" : "Вход";
-        document.getElementById("switchText").innerHTML = isRegistering
-          ? 'Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Войти</a>'
-          : 'Нет аккаунта? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Зарегистрироваться</a>';
-        document.getElementById("regFields").style.display = isRegistering ? "block" : "none";
-      };
-
-      window.handleAuth = async () => {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        try {
-          if (isRegistering) {
-            const name = document.getElementById("name").value.trim();
-            const telegram = document.getElementById("telegram").value.trim();
-
-            const userCred = await createUserWithEmailAndPassword(auth, email, password);
-            const uid = userCred.user.uid;
-
-            await set(ref(db, "users/" + uid), {
-              email,
-              name,
-              telegram
-            });
-
-            alert("Регистрация прошла успешно!");
-          } else {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Вход выполнен!");
-          }
-        } catch (err) {
-          alert("Ошибка: " + err.message);
-        }
-      };
-
-      toggleForm();
-    </script>
-  </body>
+    onAuthStateChanged(auth, user => {
+      if (user) location.href = 'main.html';
+    });
+  </script>
+</body>
 </html>
