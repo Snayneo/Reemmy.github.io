@@ -1,73 +1,149 @@
-<!-- ДОПИШЕМ код прямо в твой index.html -->
-<script type="module">
-  import { auth, db, registerUser, loginUser, getUserData, updateUserSocial } from './firebase.js';
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reemmy</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .auth-popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .auth-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      position: relative;
+      width: 300px;
+    }
+    .auth-card input {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+    }
+    .btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.7rem;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #4f46e5;
+      color: #4f46e5;
+      padding: 0.7rem;
+      cursor: pointer;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111827;
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem 0;
+    }
+    .nav-item img {
+      width: 30px;
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reemmy</h1>
+    <p>Платформа для заработка на коротких видео</p>
+    <div class="btn-group">
+      <button class="btn" onclick="showAuthForm(true)">Зарегистрироваться</button>
+      <button class="btn-outline" onclick="showAuthForm(false)">Войти</button>
+    </div>
+  </header>
 
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const submitBtn = document.getElementById('submitBtn');
-  const switchForm = document.getElementById('switchForm');
-  const formTitle = document.getElementById('form-title');
+  <main>
+    <section class="who">
+      <h2>Кто мы?</h2>
+      <p>Reemmy — независимая партнёрская платформа, которая помогает авторам зарабатывать на видео даже с 1 000 подписчиков. Мы не связаны с TikTok или другими соцсетями.</p>
+    </section>
+  </main>
 
-  const authSection = document.getElementById('auth-section');
-  const profileSection = document.getElementById('profile-section');
+  <div class="auth-popup" id="authForm">
+    <div class="auth-card">
+      <h3 id="formTitle">Авторизация</h3>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Пароль" />
+      <button class="btn" onclick="handleAuth()">Продолжить</button>
+      <p class="small" id="toggleText">
+        Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>
+      </p>
+      <button class="close-btn" onclick="hideAuthForm()">✕</button>
+    </div>
+  </div>
 
-  const userEmail = document.getElementById('userEmail');
-  const userMoney = document.getElementById('userMoney');
-  const userSocial = document.getElementById('userSocial');
-  const socialInput = document.getElementById('socialInput');
+  <nav class="bottom-nav">
+    <div class="nav-item active"><img src="https://img.icons8.com/ios-filled/50/ffffff/home-page.png" alt="Главная" /></div>
+    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/combo-chart--v1.png" alt="Статистика" /></div>
+    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/user-menu-female.png" alt="Профиль" onclick="showAuthForm(false)" /></div>
+  </nav>
 
-  let isLogin = true;
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { auth, registerUser, loginUser } from './firebase.js';
 
-  switchForm.onclick = () => {
-    isLogin = !isLogin;
-    formTitle.innerText = isLogin ? 'Вход' : 'Регистрация';
-    submitBtn.innerText = isLogin ? 'Войти' : 'Зарегистрироваться';
-    switchForm.innerText = isLogin ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти';
-  };
+    let isRegistering = false;
 
-  submitBtn.onclick = async () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+    window.showAuthForm = (registering) => {
+      isRegistering = registering;
+      document.getElementById("formTitle").innerText = registering ? "Регистрация" : "Авторизация";
+      document.getElementById("toggleText").innerHTML = registering
+        ? `Уже есть аккаунт? <a href="#" onclick="toggleForm()">Войти</a>`
+        : `Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>`;
+      document.getElementById("authForm").style.display = "flex";
+    };
 
-    if (!email || !password) return alert("Введите email и пароль");
+    window.hideAuthForm = () => {
+      document.getElementById("authForm").style.display = "none";
+    };
 
-    try {
-      if (isLogin) {
-        await loginUser(email, password);
-      } else {
-        await registerUser(email, password);
+    window.toggleForm = () => {
+      showAuthForm(!isRegistering);
+    };
+
+    window.handleAuth = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        if (isRegistering) {
+          await registerUser(email, password);
+          alert("Успешная регистрация!");
+        } else {
+          await loginUser(email, password);
+          alert("Вход выполнен!");
+        }
+        hideAuthForm();
+      } catch (error) {
+        alert("Ошибка: " + error.message);
       }
-    } catch (err) {
-      alert("Ошибка: " + err.message);
-    }
-  };
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      authSection.classList.add('hidden');
-      profileSection.classList.remove('hidden');
-      const data = await getUserData(user.uid);
-
-      userEmail.textContent = data.email;
-      userMoney.textContent = (data.money || 0) + "₸";
-      userSocial.textContent = data.social || 'не привязано';
-    } else {
-      authSection.classList.remove('hidden');
-      profileSection.classList.add('hidden');
-    }
-  });
-
-  window.saveSocial = async () => {
-    const social = socialInput.value.trim();
-    if (!social) return alert("Введите соцсеть");
-
-    const user = auth.currentUser;
-    await updateUserSocial(user.uid, social);
-    userSocial.textContent = social;
-    alert("Сохранено!");
-  };
-
-  window.logout = async () => {
-    await signOut(auth);
-  };
-</script>
+    };
+  </script>
+</body>
+</html>
