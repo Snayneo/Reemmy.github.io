@@ -33,11 +33,7 @@
           <i class="fas fa-lock"></i>
           <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
-        <div id="recaptcha-container" style="margin-top: 10px;"></div> <!-- Контейнер для reCAPTCHA -->
-        <button type="submit" class="ios-button" id="login-btn">
-          <span class="btn-text">Войти</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
+        <button type="submit" class="ios-button">Войти</button>
       </form>
       
       <form id="signup-form" class="hidden">
@@ -51,12 +47,9 @@
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="signup-password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+          <input type="password" id="signup-password" placeholder="Пароль" required>
         </div>
-        <button type="submit" class="ios-button" id="signup-btn">
-          <span class="btn-text">Зарегистрироваться</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
+        <button type="submit" class="ios-button">Зарегистрироваться</button>
       </form>
     </div>
   </div>
@@ -86,75 +79,6 @@
         <span>Профиль</span>
       </button>
     </nav>
-  </div>
-
-  <!-- Модальные окна -->
-  <div id="logout-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Подтверждение выхода</h3>
-      <p>Вы точно хотите выйти из аккаунта?</p>
-      <div class="modal-actions">
-        <button id="logout-cancel" class="ios-button small">Отмена</button>
-        <button id="logout-confirm" class="ios-button small danger">Выйти</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="change-password-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Смена пароля</h3>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="current-password" placeholder="Текущий пароль">
-      </div>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="new-password" placeholder="Новый пароль">
-      </div>
-      <div class="modal-actions">
-        <button id="password-cancel" class="ios-button small">Отмена</button>
-        <button id="password-confirm" class="ios-button small">Сохранить</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="rejection-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Причина отклонения</h3>
-      <textarea id="rejection-reason" placeholder="Укажите причину отклонения задания..." rows="3"></textarea>
-      <div class="modal-actions">
-        <button id="rejection-cancel" class="ios-button small">Отмена</button>
-        <button id="rejection-confirm" class="ios-button small danger">Подтвердить</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Модальное окно для SMS MFA -->
-  <div id="mfa-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Двухфакторная аутентификация</h3>
-      <div id="mfa-phone-step" class="mfa-step">
-        <div class="input-group">
-          <i class="fas fa-phone"></i>
-          <input type="tel" id="mfa-phone" placeholder="Номер телефона (+79991234567)" required>
-        </div>
-        <div id="recaptcha-container-mfa" style="margin-top: 10px;"></div>
-        <div class="modal-actions">
-          <button id="mfa-phone-cancel" class="ios-button small">Отмена</button>
-          <button id="mfa-phone-confirm" class="ios-button small">Отправить код</button>
-        </div>
-      </div>
-      <div id="mfa-code-step" class="mfa-step hidden">
-        <div class="input-group">
-          <i class="fas fa-sms"></i>
-          <input type="text" id="mfa-code" placeholder="Код из SMS" required>
-        </div>
-        <div class="modal-actions">
-          <button id="mfa-code-cancel" class="ios-button small">Отмена</button>
-          <button id="mfa-code-confirm" class="ios-button small">Подтвердить</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
