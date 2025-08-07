@@ -65,7 +65,12 @@ const sections = {
   
   materials: `
     <div class="ios-section">
-      <h2 class="ios-title">Задания</h2>
+      <h2 class="ios-title">Доступные задания</h2>
+      <div class="materials-filters">
+        <button class="filter-btn active" data-platform="all">Все</button>
+        <button class="filter-btn" data-platform="tiktok">TikTok</button>
+        <button class="filter-btn" data-platform="youtube">YouTube</button>
+      </div>
       <div class="materials-list" id="materials-list">
         <div class="loading-placeholder">
           <i class="fas fa-spinner fa-spin"></i>
@@ -151,18 +156,16 @@ async function saveUserData(uid, data) {
 async function loadMaterials() {
   try {
     const snapshot = await get(ref(db, 'Materials'));
-    if (snapshot.exists()) {
-      return snapshot.val();
-    }
-    return null;
+    return snapshot.exists() ? snapshot.val() : null;
   } catch (error) {
     console.error("Ошибка загрузки материалов:", error);
+    showNotification("Ошибка загрузки заданий", "error");
     return null;
   }
 }
 
-// Отображение материалов
-async function displayMaterials() {
+// Отображение материалов с фильтрацией
+async function displayMaterials(filterPlatform = 'all') {
   const materialsList = document.getElementById('materials-list');
   materialsList.innerHTML = `
     <div class="loading-placeholder">
@@ -190,13 +193,35 @@ async function displayMaterials() {
     `;
     return;
   }
+
+  let filteredMaterials = Object.entries(materials);
   
-  materialsList.innerHTML = Object.entries(materials).map(([id, material]) => `
-    <div class="ios-card material-item" data-id="${id}">
+  if (filterPlatform !== 'all') {
+    filteredMaterials = filteredMaterials.filter(([_, material]) => 
+      material.platform === filterPlatform
+    );
+  }
+
+  if (filteredMaterials.length === 0) {
+    materialsList.innerHTML = `
+      <div class="ios-card">
+        <p>Нет заданий для выбранной платформы</p>
+      </div>
+    `;
+    return;
+  }
+
+  materialsList.innerHTML = filteredMaterials.map(([id, material]) => `
+    <div class="ios-card material-item" data-id="${id}" data-platform="${material.platform || 'other'}">
+      <div class="material-badge ${material.platform || 'other'}">
+        ${material.platform === 'tiktok' ? '<i class="fab fa-tiktok"></i>' : 
+          material.platform === 'youtube' ? '<i class="fab fa-youtube"></i>' : ''}
+      </div>
       <h3>${material.title || 'Рекламное задание'}</h3>
       <p>${material.description || 'Разместите рекламу в своем контенте'}</p>
-      <p>Платим за 1к просмотров: <strong>${material.reward || 0.1}₽</strong></p>
-      ${material.requirements ? `<p>Требования: ${material.requirements}</p>` : ''}
+      <p><strong>Платформа:</strong> ${material.platform ? material.platform.charAt(0).toUpperCase() + material.platform.slice(1) : 'Любая'}</p>
+      <p><strong>Вознаграждение:</strong> ${material.reward || 0.1}₽ за 1к просмотров</p>
+      ${material.url ? `<p><a href="${material.url}" target="_blank" class="material-link">Ссылка на рекламные материалы</a></p>` : ''}
       <div class="material-actions">
         <button class="ios-button small take-btn">
           <span class="btn-text">Принять задание</span>
@@ -205,7 +230,7 @@ async function displayMaterials() {
       </div>
     </div>
   `).join('');
-  
+
   // Обработчики для кнопок "Принять задание"
   document.querySelectorAll('.take-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
@@ -222,8 +247,11 @@ async function displayMaterials() {
         try {
           await update(ref(db, `users/${uid}/materials`), {
             [materialId]: {
-              accepted: Date.now(),
-              status: 'in_progress'
+              accepted: new Date().toISOString(),
+              status: 'in_progress',
+              platform: materials[materialId].platform,
+              reward: materials[materialId].reward,
+              title: materials[materialId].title
             }
           });
           showNotification('Задание успешно принято!');
@@ -320,6 +348,15 @@ async function loadSection(sectionId, uid) {
   
   if (sectionId === 'materials') {
     await displayMaterials();
+    
+    // Обработчики для фильтров
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        displayMaterials(this.dataset.platform);
+      });
+    });
   }
 }
 
