@@ -4,55 +4,620 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reemmy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --ios-blue: #007AFF;
+      --ios-red: #FF3B30;
+      --ios-gray: #F2F2F7;
+      --ios-dark: #1C1C1E;
+      --ios-card: #FFFFFF;
+      --ios-separator: #E5E5EA;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--ios-gray);
+      color: var(--ios-dark);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* Auth Screen */
+    #auth-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      background-color: var(--ios-gray);
+    }
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--ios-card);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .auth-title {
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: var(--ios-blue);
+    }
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8E8E93;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid var(--ios-separator);
+      border-radius: 10px;
+      font-size: 16px;
+      background: var(--ios-card);
+    }
+    .ios-button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: var(--ios-blue);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    /* App Screen */
+    #app-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 80px;
+    }
+    /* iOS Tab Bar */
+    .ios-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: var(--ios-card);
+      border-top: 1px solid var(--ios-separator);
+      padding: 10px 0;
+      z-index: 100;
+    }
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      color: #8E8E93;
+      font-size: 12px;
+      padding: 5px 0;
+    }
+    .tab-btn.active {
+      color: var(--ios-blue);
+    }
+    .tab-btn i {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    /* Sections */
+    .ios-section {
+      padding: 16px;
+    }
+    .ios-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .ios-card {
+      background: var(--ios-card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    /* Profile */
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .logout-btn {
+      position: absolute;
+      top: 0;
+      right: 16px;
+      color: var(--ios-red);
+      background: none;
+      border: none;
+      font-size: 14px;
+    }
+    .avatar {
+      font-size: 60px;
+      color: var(--ios-blue);
+      margin-bottom: 10px;
+    }
+    .balance {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    .social-connect {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .connect-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--ios-card);
+      border: 1px solid var(--ios-separator);
+    }
+    .connect-btn i {
+      font-size: 20px;
+    }
+    .tiktok-btn i {
+      color: #000;
+    }
+    .youtube-btn i {
+      color: #FF0000;
+    }
+    /* Materials */
+    .material-item {
+      margin-bottom: 20px;
+    }
+    .material-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .material-desc {
+      margin-bottom: 10px;
+      color: #666;
+    }
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--ios-blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    /* Stats */
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #8E8E93;
+    }
+    /* Main */
+    .news-card {
+      margin-bottom: 20px;
+    }
+    .news-image {
+      width: 100%;
+      height: 180px;
+      background-color: #ddd;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+    }
+    .support-section {
+      margin-top: 30px;
+    }
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--ios-card);
+      border-radius: 14px;
+      padding: 20px;
+      width: 80%;
+      max-width: 300px;
+      text-align: center;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+    .cancel-btn {
+      background: var(--ios-gray);
+    }
+    .confirm-btn {
+      background: var(--ios-red);
+      color: white;
+    }
+  </style>
 </head>
 <body class="ios-style">
-  <!-- Экран авторизации -->
-  <div id="auth-screen" class="screen">
-    <div class="ios-section">
-      <h2 class="ios-title">Reemmy</h2>
-      <div id="auth-form">
-        <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input type="text" id="name" placeholder="Имя" required>
-        </div>
+  <!-- Auth Screen -->
+  <div id="auth-screen">
+    <div class="auth-container">
+      <h1 class="auth-title">Reemmy</h1>
+      
+      <!-- Login Form (shown by default) -->
+      <form id="login-form">
         <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input type="email" id="email" placeholder="Email" required>
+          <input type="email" id="login-email" placeholder="Email" required>
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="password" placeholder="Пароль" required>
+          <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
-        <button id="signup-btn" class="ios-button">Зарегистрироваться</button>
-        <button id="switch-to-login" class="ios-button secondary">Уже есть аккаунт? Войти</button>
-      </div>
+        <button type="submit" class="ios-button">Войти</button>
+        <p style="margin-top: 15px;">Нет аккаунта? <a href="#" id="show-register">Зарегистрироваться</a></p>
+      </form>
+      
+      <!-- Register Form (hidden by default) -->
+      <form id="register-form" class="hidden">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="register-name" placeholder="Имя" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="register-email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="register-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="ios-button">Зарегистрироваться</button>
+        <p style="margin-top: 15px;">Уже есть аккаунт? <a href="#" id="show-login">Войти</a></p>
+      </form>
     </div>
   </div>
 
-  <!-- Экран приложения -->
-  <div id="app-screen" class="screen hidden">
-    <div id="dynamic-content"></div>
-    <div class="ios-tabbar">
-      <button class="tab-btn" data-section="main"><i class="fas fa-home"></i>Главная</button>
-      <button class="tab-btn" data-section="materials"><i class="fas fa-ad"></i>Материалы</button>
-      <button class="tab-btn" data-section="stats"><i class="fas fa-chart-bar"></i>Статистика</button>
-      <button class="tab-btn" data-section="profile"><i class="fas fa-user"></i>Профиль</button>
+  <!-- Main App Screen -->
+  <div id="app-screen" class="hidden">
+    <div class="content" id="dynamic-content">
+      <!-- Content will be loaded dynamically -->
     </div>
+
+    <!-- iOS Style Tab Bar -->
+    <nav class="ios-tabbar">
+      <button class="tab-btn active" data-section="main">
+        <i class="fas fa-home"></i>
+        <span>Главная</span>
+      </button>
+      <button class="tab-btn" data-section="materials">
+        <i class="fas fa-ad"></i>
+        <span>Материалы</span>
+      </button>
+      <button class="tab-btn" data-section="stats">
+        <i class="fas fa-chart-line"></i>
+        <span>Статистика</span>
+      </button>
+      <button class="tab-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
+    </nav>
   </div>
 
-  <!-- Модальное окно для выхода -->
+  <!-- Logout Modal -->
   <div id="logout-modal" class="modal hidden">
     <div class="modal-content">
       <h3>Точно хотите выйти?</h3>
       <div class="modal-buttons">
-        <button id="confirm-logout" class="ios-button red">Выйти</button>
-        <button id="cancel-logout" class="ios-button secondary">Отмена</button>
+        <button class="modal-btn cancel-btn" id="cancel-logout">Отмена</button>
+        <button class="modal-btn confirm-btn" id="confirm-logout">Выйти</button>
       </div>
     </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <script type="module">
+    import { 
+      auth, 
+      db,
+      ref,
+      set,
+      get,
+      update,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from './firebase.js';
+
+    // DOM Elements
+    const authScreen = document.getElementById('auth-screen');
+    const appScreen = document.getElementById('app-screen');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const showRegister = document.getElementById('show-register');
+    const showLogin = document.getElementById('show-login');
+    const dynamicContent = document.getElementById('dynamic-content');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const logoutModal = document.getElementById('logout-modal');
+    const cancelLogout = document.getElementById('cancel-logout');
+    const confirmLogout = document.getElementById('confirm-logout');
+
+    // Show register form
+    showRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.classList.add('hidden');
+      registerForm.classList.remove('hidden');
+    });
+
+    // Show login form
+    showLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerForm.classList.add('hidden');
+      loginForm.classList.remove('hidden');
+    });
+
+    // Login
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        alert('Ошибка входа: ' + error.message);
+      }
+    });
+
+    // Register
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Save user data to database
+        await set(ref(db, `users/${user.uid}`), {
+          name,
+          email,
+          balance: 0,
+          rewards: {},
+          social: {
+            tiktok: null,
+            youtube: null
+          }
+        });
+        
+        alert('Регистрация успешна!');
+      } catch (error) {
+        alert('Ошибка регистрации: ' + error.message);
+      }
+    });
+
+    // Load section content
+    async function loadSection(sectionId, user) {
+      let content = '';
+      
+      switch(sectionId) {
+        case 'main':
+          content = `
+            <div class="ios-section">
+              <h2 class="ios-title">Главная</h2>
+              
+              <div class="ios-card news-card">
+                <div class="news-image">Изображение</div>
+                <h3>Reemmy - зарабатывать легко!</h3>
+                <p>Начните зарабатывать уже сегодня, размещая рекламу в своих соцсетях</p>
+              </div>
+              
+              <div class="ios-card">
+                <h3>Почему мы?</h3>
+                <p>• Высокие ставки за просмотры</p>
+                <p>• Мгновенные выплаты</p>
+                <p>• Простая система работы</p>
+              </div>
+              
+              <div class="ios-card support-section">
+                <h3>Поддержка</h3>
+                <p>Email: support@reemmy.ru</p>
+                <p>База знаний: help.reemmy.ru</p>
+              </div>
+            </div>
+          `;
+          break;
+          
+        case 'materials':
+          content = `
+            <div class="ios-section">
+              <h2 class="ios-title">Материалы</h2>
+              
+              <div class="ios-card material-item">
+                <h3 class="material-title">Задание 1</h3>
+                <p class="material-desc">Реклама от Reemmy - вставьте наш логотип в ваше видео</p>
+                <p>Оплата: <strong>0.1₽ за 1к просмотров</strong></p>
+                <button class="copy-btn">Копировать ссылку</button>
+              </div>
+              
+              <div class="ios-card material-item">
+                <h3 class="material-title">Задание 2</h3>
+                <p class="material-desc">Реклама нового продукта</p>
+                <p>Оплата: <strong>0.15₽ за 1к просмотров</strong></p>
+                <button class="copy-btn">Копировать ссылку</button>
+              </div>
+            </div>
+          `;
+          break;
+          
+        case 'stats':
+          content = `
+            <div class="ios-section">
+              <h2 class="ios-title">Статистика</h2>
+              <div class="ios-card empty-state">
+                <p>Скоро здесь появится ваша статистика</p>
+              </div>
+            </div>
+          `;
+          break;
+          
+        case 'profile':
+          const userData = await get(ref(db, `users/${user.uid}`));
+          const data = userData.val();
+          
+          content = `
+            <div class="ios-section">
+              <div class="profile-header">
+                <button class="logout-btn" id="show-logout-modal">
+                  <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <div class="avatar">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <h2>${data.name}</h2>
+                <p>${data.email}</p>
+                <div class="balance">
+                  <span>Баланс:</span>
+                  <strong>${data.balance || 0}₽</strong>
+                </div>
+              </div>
+              
+              <div class="ios-card">
+                <h3>Подключить соцсети</h3>
+                <div class="social-connect">
+                  <button class="connect-btn tiktok-btn" id="connect-tiktok">
+                    <i class="fab fa-tiktok"></i>
+                    <span>${data.social?.tiktok || 'Подключить TikTok'}</span>
+                  </button>
+                  <button class="connect-btn youtube-btn" id="connect-youtube">
+                    <i class="fab fa-youtube"></i>
+                    <span>${data.social?.youtube || 'Подключить YouTube'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+      }
+      
+      dynamicContent.innerHTML = content;
+      
+      // Update active tab
+      tabButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === sectionId);
+      });
+      
+      // Add event listeners for profile section
+      if (sectionId === 'profile') {
+        document.getElementById('show-logout-modal').addEventListener('click', () => {
+          logoutModal.classList.remove('hidden');
+        });
+        
+        // Add social connect handlers
+        document.getElementById('connect-tiktok').addEventListener('click', async () => {
+          const tiktok = prompt('Введите ваш TikTok @username');
+          if (tiktok) {
+            await update(ref(db, `users/${user.uid}/social`), {
+              tiktok
+            });
+            loadSection('profile', user);
+          }
+        });
+        
+        document.getElementById('connect-youtube').addEventListener('click', async () => {
+          const youtube = prompt('Введите ваш YouTube ID или ссылку');
+          if (youtube) {
+            await update(ref(db, `users/${user.uid}/social`), {
+              youtube
+            });
+            loadSection('profile', user);
+          }
+        });
+      }
+      
+      // Add copy handlers for materials
+      if (sectionId === 'materials') {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            alert('Ссылка скопирована в буфер обмена!');
+          });
+        });
+      }
+    }
+
+    // Tab navigation
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const user = auth.currentUser;
+        if (user) loadSection(btn.dataset.section, user);
+      });
+    });
+
+    // Logout modal
+    cancelLogout.addEventListener('click', () => {
+      logoutModal.classList.add('hidden');
+    });
+    
+    confirmLogout.addEventListener('click', async () => {
+      await signOut(auth);
+      logoutModal.classList.add('hidden');
+    });
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        authScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+        loadSection('main', user);
+      } else {
+        authScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+        
+        // Reset forms
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+      }
+    });
+  </script>
 </body>
 </html>
