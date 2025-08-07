@@ -2,44 +2,23 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reemmy</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Spline+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
     />
   </head>
-  <body class="bg-[#221122] text-white font-sans">
-    <div class="flex flex-col min-h-screen justify-between overflow-x-hidden" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
-      <div>
-        <div class="w-full bg-cover bg-center min-h-80 rounded-b-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/...");'></div>
-        <h1 class="text-3xl font-bold text-center mt-6">Reemmy</h1>
-        <p class="text-center text-lg px-4 mt-2">Earn from videos. Even with 1,000 subscribers.</p>
-
-        <div class="flex justify-center mt-6">
-          <div class="flex flex-col gap-3 w-full max-w-sm px-4">
-            <button onclick="openForm()" class="h-12 rounded-full bg-[#ee2bee] text-white font-bold">Sign In / Sign Up</button>
-            <button class="h-12 rounded-full bg-[#482348] text-white font-bold">More Details</button>
-            <button class="h-12 rounded-full bg-transparent text-white font-bold">Learn More</button>
-          </div>
-        </div>
-      </div>
-      <div class="h-5"></div>
-    </div>
-
-    <!-- ✅ Модальное окно -->
-    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50">
-      <div class="bg-white text-black rounded-xl p-6 w-full max-w-md space-y-4 relative">
-        <button class="absolute top-2 right-4 text-xl" onclick="closeForm()">×</button>
-        <h2 class="text-xl font-bold text-center" id="formTitle">Регистрация</h2>
+  <body class="bg-[#221122] text-white font-sans" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
+    <div id="authPage" class="min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white text-black rounded-xl p-6 w-full max-w-sm space-y-4">
+        <h2 class="text-2xl font-bold text-center" id="formTitle">Регистрация</h2>
 
         <input type="text" id="name" placeholder="Имя" class="border px-3 py-2 w-full rounded" />
-        <input type="text" id="telegram" placeholder="Telegram" class="border px-3 py-2 w-full rounded" />
-        <input type="email" id="email" placeholder="Email" class="border px-3 py-2 w-full rounded" />
+        <input type="text" id="telegram" placeholder="Telegram (связь)" class="border px-3 py-2 w-full rounded" />
+        <input type="email" id="email" placeholder="Электронная почта" class="border px-3 py-2 w-full rounded" />
         <input type="password" id="password" placeholder="Пароль" class="border px-3 py-2 w-full rounded" />
 
         <button onclick="handleAuth()" class="w-full bg-[#ee2bee] text-white py-2 rounded font-bold">Продолжить</button>
@@ -50,7 +29,6 @@
       </div>
     </div>
 
-    <!-- ✅ Firebase + Логика -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -72,23 +50,13 @@
 
       let isRegistering = true;
 
-      window.openForm = () => {
-        document.getElementById("authModal").style.display = "flex";
-        toggleForm(true);
-      };
-
-      window.closeForm = () => {
-        document.getElementById("authModal").style.display = "none";
-      };
-
-      window.toggleForm = (keepOpen = false) => {
+      window.toggleForm = () => {
         isRegistering = !isRegistering;
         document.getElementById("formTitle").innerText = isRegistering ? "Регистрация" : "Вход";
         document.getElementById("switchText").innerHTML = isRegistering
           ? 'Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-600">Войти</a>'
           : 'Нет аккаунта? <a href="#" onclick="toggleForm()" class="text-blue-600">Зарегистрироваться</a>';
 
-        // Показ/скрытие полей
         document.getElementById("name").style.display = isRegistering ? "block" : "none";
         document.getElementById("telegram").style.display = isRegistering ? "block" : "none";
       };
@@ -96,6 +64,7 @@
       window.handleAuth = async () => {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
+
         try {
           if (isRegistering) {
             const name = document.getElementById("name").value.trim();
@@ -111,19 +80,16 @@
             });
 
             alert("Регистрация прошла успешно!");
-            closeForm();
           } else {
             await signInWithEmailAndPassword(auth, email, password);
             alert("Вход выполнен!");
-            closeForm();
           }
         } catch (err) {
           alert("Ошибка: " + err.message);
         }
       };
 
-      // Инициализация формы при загрузке
-      toggleForm(true);
+      toggleForm();
     </script>
   </body>
 </html>
