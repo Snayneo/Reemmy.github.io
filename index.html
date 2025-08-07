@@ -83,5 +83,35 @@
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
+  <!-- Модальное окно подтверждения выхода -->
+<div id="logout-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Подтверждение выхода</h3>
+    <p>Вы точно хотите выйти из аккаунта?</p>
+    <div class="modal-actions">
+      <button id="logout-cancel" class="ios-button small">Отмена</button>
+      <button id="logout-confirm" class="ios-button small danger">Выйти</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно смены пароля -->
+<div id="change-password-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Смена пароля</h3>
+    <div class="input-group">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="current-password" placeholder="Текущий пароль">
+    </div>
+    <div class="input-group">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="new-password" placeholder="Новый пароль">
+    </div>
+    <div class="modal-actions">
+      <button id="password-cancel" class="ios-button small">Отмена</button>
+      <button id="password-confirm" class="ios-button small">Сохранить</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
