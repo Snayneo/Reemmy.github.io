@@ -4,55 +4,368 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reemmy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --ios-blue: #007AFF;
+      --ios-red: #FF3B30;
+      --ios-gray: #F2F2F7;
+      --ios-dark: #1C1C1E;
+      --ios-card: #FFFFFF;
+      --ios-separator: #E5E5EA;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--ios-gray);
+      color: var(--ios-dark);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideIn 0.3s ease-out;
+    }
+    .notification.success {
+      background-color: #34C759;
+    }
+    .notification.error {
+      background-color: #FF3B30;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    /* Auth Screen */
+    #auth-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      background-color: var(--ios-gray);
+    }
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--ios-card);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--ios-blue);
+      margin-bottom: 10px;
+    }
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--ios-separator);
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .auth-tab.active {
+      border-bottom: 2px solid var(--ios-blue);
+      color: var(--ios-blue);
+      font-weight: 500;
+    }
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8E8E93;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid var(--ios-separator);
+      border-radius: 10px;
+      font-size: 16px;
+      background: var(--ios-card);
+    }
+    .ios-button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: var(--ios-blue);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    .ios-button.small {
+      padding: 8px 12px;
+      font-size: 14px;
+      width: auto;
+    }
+    .ios-button.danger {
+      background: var(--ios-red);
+      margin-top: 30px;
+    }
+    .ios-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .btn-text, .btn-loader {
+      display: inline-block;
+    }
+    /* App Screen */
+    #app-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 80px;
+    }
+    /* iOS Tab Bar */
+    .ios-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: var(--ios-card);
+      border-top: 1px solid var(--ios-separator);
+      padding: 10px 0;
+      z-index: 100;
+    }
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      color: #8E8E93;
+      font-size: 12px;
+      padding: 5px 0;
+    }
+    .tab-btn.active {
+      color: var(--ios-blue);
+    }
+    .tab-btn i {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    /* Sections */
+    .ios-section {
+      padding: 16px;
+    }
+    .ios-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .ios-card {
+      background: var(--ios-card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .card-image {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      height: 150px;
+      object-fit: cover;
+    }
+    .benefits-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+    .benefits-list li {
+      margin-bottom: 5px;
+    }
+    .benefits-list i {
+      color: var(--ios-blue);
+      margin-right: 5px;
+    }
+    /* Profile */
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .avatar {
+      font-size: 60px;
+      color: var(--ios-blue);
+      margin-bottom: 10px;
+    }
+    .balance {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    .profile-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--ios-separator);
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+    .logout-btn-top {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: none;
+      border: none;
+      color: var(--ios-red);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    /* Materials */
+    .loading-placeholder {
+      text-align: center;
+      padding: 20px;
+      color: #8E8E93;
+    }
+    .loading-placeholder i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .material-item {
+      margin-bottom: 16px;
+    }
+    .material-item h3 {
+      margin-bottom: 8px;
+      color: var(--ios-dark);
+    }
+    .material-item p {
+      margin-bottom: 8px;
+      color: #666;
+    }
+    .material-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+    .take-btn {
+      background-color: var(--ios-blue);
+      color: white;
+    }
+    /* Stats */
+    .stats-placeholder {
+      text-align: center;
+      padding: 40px 0;
+      color: #8E8E93;
+    }
+    .stats-placeholder i {
+      font-size: 50px;
+      margin-bottom: 20px;
+      color: var(--ios-blue);
+    }
+  </style>
 </head>
 <body class="ios-style">
-  <!-- Экран авторизации -->
-  <div id="auth-screen" class="screen">
-    <div class="ios-section">
-      <h1 class="auth-title">Reemmy</h1>
-      <div id="auth-form">
-        <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input type="text" id="name" placeholder="Имя" required>
-        </div>
+  <!-- Notification -->
+  <div id="notification" class="notification hidden"></div>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen">
+    <div class="auth-container">
+      <div class="logo-container">
+        <div class="logo-text">Reemmy</div>
+        <p>Зарабатывайте на рекламе</p>
+      </div>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="login-tab">Вход</div>
+        <div class="auth-tab" id="signup-tab">Регистрация</div>
+      </div>
+      
+      <form id="login-form">
         <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input type="email" id="email" placeholder="Email" required>
+          <input type="email" id="login-email" placeholder="Email" required>
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="password" placeholder="Пароль" required>
+          <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
-        <button id="signup-btn" class="ios-button">Зарегистрироваться</button>
-        <button id="switch-to-login" class="ios-button secondary">Уже есть аккаунт? Войти</button>
-      </div>
+        <button type="submit" class="ios-button">Войти</button>
+      </form>
+      
+      <form id="signup-form" class="hidden">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="signup-name" placeholder="Ваше имя" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signup-email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="signup-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="ios-button">Зарегистрироваться</button>
+      </form>
     </div>
   </div>
 
-  <!-- Экран приложения -->
-  <div id="app-screen" class="screen hidden">
-    <div id="dynamic-content" class="content"></div>
-    <div class="ios-tabbar">
-      <button class="tab-btn active" data-section="main"><i class="fas fa-home"></i>Главная</button>
-      <button class="tab-btn" data-section="materials"><i class="fas fa-ad"></i>Материалы</button>
-      <button class="tab-btn" data-section="stats"><i class="fas fa-chart-bar"></i>Статистика</button>
-      <button class="tab-btn" data-section="profile"><i class="fas fa-user"></i>Профиль</button>
+  <!-- Main App Screen -->
+  <div id="app-screen" class="hidden">
+    <div class="content" id="dynamic-content">
+      <!-- Content will be loaded dynamically -->
     </div>
+
+    <!-- iOS Style Tab Bar -->
+    <nav class="ios-tabbar">
+      <button class="tab-btn active" data-section="main">
+        <i class="fas fa-home"></i>
+        <span>Главная</span>
+      </button>
+      <button class="tab-btn" data-section="materials">
+        <i class="fas fa-ad"></i>
+        <span>Задания</span>
+      </button>
+      <button class="tab-btn" data-section="stats">
+        <i class="fas fa-chart-line"></i>
+        <span>Статистика</span>
+      </button>
+      <button class="tab-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
+    </nav>
   </div>
 
-  <!-- Модальное окно для выхода -->
-  <div id="logout-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Точно хотите выйти?</h3>
-      <div class="modal-buttons">
-        <button id="confirm-logout" class="ios-button red">Выйти</button>
-        <button id="cancel-logout" class="ios-button secondary">Отмена</button>
-      </div>
-    </div>
-  </div>
-
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
