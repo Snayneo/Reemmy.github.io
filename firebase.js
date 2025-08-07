@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
   getAuth, 
-  createUserWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut
@@ -10,8 +10,10 @@ import {
   getDatabase, 
   ref, 
   set, 
-  get, 
-  update 
+  get,
+  update,
+  push,
+  child
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -19,10 +21,9 @@ const firebaseConfig = {
   authDomain: "reemmy-fdnbf276454rfgh-1.firebaseapp.com",
   databaseURL: "https://reemmy-fdnbf276454rfgh-1-default-rtdb.firebaseio.com",
   projectId: "reemmy-fdnbf276454rfgh-1",
-  storageBucket: "reemmy-fdnbf276454rfgh-1.firebasestorage.app",
+  storageBucket: "reemmy-fdnbf276454rfgh-1.appspot.com",
   messagingSenderId: "1013780844206",
-  appId: "1:1013780844206:web:7fc8af82eecf80ee04673f",
-  measurementId: "G-7EMR3G2TN9"
+  appId: "1:1013780844206:web:7fc8af82eecf80ee04673f"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -36,6 +37,8 @@ export {
   set,
   get,
   update,
+  push,
+  child,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
