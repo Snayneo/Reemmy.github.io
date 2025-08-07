@@ -1,27 +1,151 @@
-/* Custom styles for Texturra Dashboard */
+/* Общие стили */
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #221122;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
 }
 
-.tab-button {
-    transition: background-color 0.2s ease-in-out;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.tab-button.active {
-    background-color: #ee2bee !important;
+.hidden {
+  display: none !important;
 }
 
-button:hover {
-    opacity: 0.9;
-    transition: opacity 0.2s ease-in-out;
+/* Стили для авторизации */
+.auth-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
 }
 
-h1, h2, h3, p {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+.auth-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.min-h-14 {
-    min-height: 3.5rem;
+.auth-container input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.auth-container button:hover {
+  background-color: #357ae8;
+}
+
+#signup-btn {
+  background-color: #34a853;
+}
+
+#signup-btn:hover {
+  background-color: #2d8e49;
+}
+
+/* Стили для основного приложения */
+.app-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.app-container header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+#logout-btn {
+  padding: 8px 16px;
+  background-color: #ea4335;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#logout-btn:hover {
+  background-color: #d33426;
+}
+
+.content {
+  padding: 20px;
+}
+
+#add-form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#add-form input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+}
+
+#add-form button {
+  padding: 10px 20px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+#add-form button:hover {
+  background-color: #357ae8;
+}
+
+#items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#items-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+#items-list li:last-child {
+  border-bottom: none;
+}
+
+#items-list li button {
+  padding: 5px 10px;
+  background-color: #ea4335;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#items-list li button:hover {
+  background-color: #d33426;
 }
