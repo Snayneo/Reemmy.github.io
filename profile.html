@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Reemmy - Профиль</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Ваш профиль</h1>
+  <p>Email: <span id="userEmail"></span></p>
+  <button onclick="location.href='main.html'">Назад</button>
+
+  <script type="module">
+    import { auth, onAuthStateChanged } from './firebase.js';
+
+    const userEmail = document.getElementById('userEmail');
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        userEmail.textContent = user.email;
+      } else {
+        location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>
