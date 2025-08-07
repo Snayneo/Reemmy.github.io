@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reemmy App</title>
+  <title>Reemmy</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js" defer></script>
 </head>
 <body>
-  <!-- Экран авторизации -->
+  <!-- Авторизация -->
   <div id="auth-screen" class="screen">
     <div class="auth-container">
-      <h1>Reemmy</h1>
+      <img src="logo.png" alt="Reemmy" class="logo">
       <form id="auth-form">
+        <input type="text" id="name" placeholder="Ваше имя" required>
         <input type="email" id="email" placeholder="Email" required>
         <input type="password" id="password" placeholder="Пароль" required>
         <button type="submit" id="login-btn">Войти</button>
@@ -23,61 +24,31 @@
     </div>
   </div>
 
-  <!-- Главное меню (после авторизации) -->
-  <div id="main-screen" class="screen hidden">
-    <header>
-      <h1>Главное меню</h1>
-    </header>
-    
-    <main class="content">
-      <div class="card" id="profile-card">
-        <i class="fas fa-user"></i>
-        <h3>Профиль</h3>
-      </div>
-      <div class="card">
-        <i class="fas fa-calendar"></i>
-        <h3>Календарь</h3>
-      </div>
-      <div class="card">
-        <i class="fas fa-tasks"></i>
-        <h3>Задачи</h3>
-      </div>
-      <div class="card">
-        <i class="fas fa-cog"></i>
-        <h3>Настройки</h3>
-      </div>
-    </main>
-    
-    <!-- Нижняя панель навигации -->
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-screen="main"><i class="fas fa-home"></i></button>
-      <button class="nav-btn" data-screen="tasks"><i class="fas fa-list"></i></button>
-      <button class="nav-btn" data-screen="profile"><i class="fas fa-user"></i></button>
-      <button class="nav-btn" id="logout-nav-btn"><i class="fas fa-sign-out-alt"></i></button>
-    </nav>
-  </div>
+  <!-- Главный экран (после авторизации) -->
+  <div id="app-screen" class="screen hidden">
+    <!-- Контент будет меняться через нижнее меню -->
+    <div class="content" id="dynamic-content">
+      <!-- Здесь будет подгружаться контент для каждого раздела -->
+    </div>
 
-  <!-- Экран профиля -->
-  <div id="profile-screen" class="screen hidden">
-    <header>
-      <h1>Мой профиль</h1>
-    </header>
-    
-    <main class="content">
-      <div class="profile-info">
-        <div class="avatar">
-          <i class="fas fa-user-circle"></i>
-        </div>
-        <h2 id="profile-email">Загрузка...</h2>
-        <button id="change-password-btn">Сменить пароль</button>
-      </div>
-    </main>
-    
+    <!-- Фиксированное нижнее меню -->
     <nav class="bottom-nav">
-      <button class="nav-btn" data-screen="main"><i class="fas fa-home"></i></button>
-      <button class="nav-btn" data-screen="tasks"><i class="fas fa-list"></i></button>
-      <button class="nav-btn active" data-screen="profile"><i class="fas fa-user"></i></button>
-      <button class="nav-btn" id="logout-nav-btn-2"><i class="fas fa-sign-out-alt"></i></button>
+      <button class="nav-btn active" data-section="main">
+        <i class="fas fa-home"></i>
+        <span>Главная</span>
+      </button>
+      <button class="nav-btn" data-section="earn">
+        <i class="fas fa-coins"></i>
+        <span>Заработок</span>
+      </button>
+      <button class="nav-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
+      <button class="nav-btn" data-section="support">
+        <i class="fas fa-headset"></i>
+        <span>Поддержка</span>
+      </button>
     </nav>
   </div>
 </body>
