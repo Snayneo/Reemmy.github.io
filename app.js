@@ -10,190 +10,200 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  sendEmailVerification,
+  updatePassword,
+  updateProfile
 } from './firebase.js';
 
-// DOM элементы
-const authScreen = document.getElementById('auth-screen');
-const appScreen = document.getElementById('app-screen');
-const dynamicContent = document.getElementById('dynamic-content');
-const tabButtons = document.querySelectorAll('.tab-btn');
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-const notification = document.getElementById('notification');
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
+// ... (остальные импорты и конфигурация)
 
-// Показываем загрузку
-function showLoading() {
+// Анимация загрузки
+function showLoading(message = 'Загрузка...') {
   const overlay = document.createElement('div');
   overlay.className = 'loading-overlay';
-  overlay.innerHTML = '<i class="fas fa-spinner loading-spinner"></i>';
+  overlay.innerHTML = `
+    <div class="loading-content">
+      <i class="fas fa-spinner loading-spinner"></i>
+      <p>${message}</p>
+    </div>
+  `;
   overlay.id = 'loading-overlay';
   document.body.appendChild(overlay);
 }
 
-// Скрываем загрузку
-function hideLoading() {
-  const overlay = document.getElementById('loading-overlay');
-  if (overlay) overlay.remove();
-}
-
-// Показать уведомление
-function showNotification(message, type = 'success') {
-  notification.textContent = message;
-  notification.className = `notification ${type}`;
-  notification.classList.remove('hidden');
+// Модальное окно подтверждения выхода
+function showLogoutModal() {
+  const modal = document.getElementById('logout-modal');
+  modal.classList.remove('hidden');
   
-  setTimeout(() => {
-    notification.classList.add('hidden');
-  }, 3000);
+  document.getElementById('logout-cancel').addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+  
+  document.getElementById('logout-confirm').addEventListener('click', async () => {
+    modal.classList.add('hidden');
+    showLoading('Выход из системы...');
+    try {
+      await signOut(auth);
+      showNotification('Вы успешно вышли из аккаунта');
+    } catch (error) {
+      showNotification('Ошибка при выходе', 'error');
+    } finally {
+      hideLoading();
+    }
+  });
 }
 
-// Шаблоны контента с новыми изображениями
-const sections = {
-  main: `
-    <div class="ios-section">
-      <h2 class="ios-title">Главная</h2>
-      <div class="ios-card news-card">
-        <div class="card-image"></div>
-        <h3>Reemmy - ваш заработок в соцсетях!</h3>
-        <p>Монетизируйте ваш контент легко и просто с нашей платформой</p>
+// Обновленный профиль с аватаром
+const profileSection = `
+  <div class="ios-section">
+    <div class="profile-header">
+      <div class="avatar-upload">
+        <img id="avatar-preview" class="avatar-preview" src="https://ui-avatars.com/api/?name=${auth.currentUser?.displayName || 'U'}&background=007AFF&color=fff">
+        <label class="avatar-upload-btn">
+          Изменить аватар
+          <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+        </label>
       </div>
-      <div class="ios-card">
-        <div class="card-image"></div>
-        <h3><i class="fas fa-star"></i> Преимущества</h3>
-        <p>Только проверенные рекламодатели и стабильные выплаты</p>
-        <ul class="benefits-list">
-          <li><i class="fas fa-check-circle"></i> До 500₽ за 1000 просмотров</li>
-          <li><i class="fas fa-check-circle"></i> Вывод от 100₽</li>
-          <li><i class="fas fa-check-circle"></i> Поддержка 24/7</li>
-        </ul>
+      <h2 id="profile-name">Загрузка...</h2>
+      <div class="balance">
+        <span>Баланс:</span>
+        <strong id="profile-balance">0 ₽</strong>
       </div>
-      <div class="ios-card">
-        <div class="card-image"></div>
-        <h3><i class="fas fa-info-circle"></i> Как начать?</h3>
-        <p>1. Зарегистрируйтесь<br>2. Выберите задание<br>3. Разместите рекламу<br>4. Получайте доход</p>
-      </div>
-      <div class="notice-card">
-        <p><strong>Важная информация:</strong> Reemmy — это независимая партнерская платформа. Мы предоставляем рекламные материалы, которые вы интегрируете в свой контент. Вознаграждение начисляется за подтвержденные просмотры. Участие полностью бесплатное.</p>
-      </div>
+      <button class="logout-btn-top" id="logout-btn-top">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
     </div>
-  `,
-  // ... остальные секции остаются без изменений
-};
+    
+    <div class="ios-card">
+      <h3><i class="fas fa-user-edit"></i> Личные данные</h3>
+      <input type="text" id="name-input" placeholder="Ваше имя" class="profile-input">
+      <button class="ios-button small" id="save-name">
+        <span class="btn-text">Сохранить имя</span>
+      </button>
+    </div>
+    
+    <div class="ios-card">
+      <h3><i class="fas fa-lock"></i> Безопасность</h3>
+      <button class="ios-button small" id="change-password-btn">
+        Сменить пароль
+      </button>
+    </div>
+    
+    ${!auth.currentUser?.emailVerified ? `
+    <div class="email-verify">
+      <p>Ваш email не подтвержден</p>
+      <button class="ios-button small" id="verify-email-btn">
+        Отправить подтверждение
+      </button>
+    </div>
+    ` : ''}
+  </div>
+`;
 
-// Инициализация приложения
-async function initApp() {
-  // Обработчики для переключения между вкладками
-  document.getElementById('login-tab').addEventListener('click', () => {
-    document.getElementById('login-tab').classList.add('active');
-    document.getElementById('signup-tab').classList.remove('active');
-    document.getElementById('login-form').classList.remove('hidden');
-    document.getElementById('signup-form').classList.add('hidden');
+// Обновленная функция для заданий
+async function displayMaterials() {
+  // ... (предыдущий код)
+  
+  // Добавляем комментарии для не пройденных заданий
+  if (task.status === 'not_completed') {
+    html += `
+      <div class="task-comment">
+        <strong>Причина:</strong> ${task.rejectionReason || 'Задание не выполнено'}
+      </div>
+      <button class="ios-button small retry-btn" data-id="${id}">
+        Подать на повторную проверку
+      </button>
+    `;
+  }
+  
+  // ... (остальной код)
+}
+
+// Обработчик повторной подачи задания
+document.querySelectorAll('.retry-btn').forEach(btn => {
+  btn.addEventListener('click', async function() {
+    const materialId = this.dataset.id;
+    showLoading('Отправка на проверку...');
+    try {
+      await update(ref(db, `users/${auth.currentUser.uid}/materials/${materialId}`), {
+        status: 'pending',
+        resubmittedAt: new Date().toISOString()
+      });
+      showNotification('Задание отправлено на повторную проверку');
+      displayMaterials();
+    } catch (error) {
+      showNotification('Ошибка при отправке', 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+});
+
+// Инициализация
+function initApp() {
+  // ... (предыдущий код инициализации)
+  
+  // Подтверждение email
+  document.addEventListener('click', async (e) => {
+    if (e.target.id === 'verify-email-btn') {
+      showLoading('Отправка письма...');
+      try {
+        await sendEmailVerification(auth.currentUser);
+        showNotification('Письмо с подтверждением отправлено');
+      } catch (error) {
+        showNotification('Ошибка при отправке', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
   });
   
-  document.getElementById('signup-tab').addEventListener('click', () => {
-    document.getElementById('signup-tab').classList.add('active');
-    document.getElementById('login-tab').classList.remove('active');
-    document.getElementById('signup-form').classList.remove('hidden');
-    document.getElementById('login-form').classList.add('hidden');
+  // Смена пароля
+  document.getElementById('change-password-btn')?.addEventListener('click', () => {
+    document.getElementById('change-password-modal').classList.remove('hidden');
   });
-
-  // Обработчик входа
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
+  
+  document.getElementById('password-confirm')?.addEventListener('click', async () => {
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
     
-    const btnText = loginBtn.querySelector('.btn-text');
-    const btnLoader = loginBtn.querySelector('.btn-loader');
+    if (newPassword.length < 6) {
+      showNotification('Пароль должен быть не менее 6 символов', 'error');
+      return;
+    }
     
-    btnText.classList.add('hidden');
-    btnLoader.classList.remove('hidden');
-    showLoading();
-    
+    showLoading('Смена пароля...');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      showNotification("Добро пожаловать!");
+      // Реализация смены пароля через reauthentication
+      await updatePassword(auth.currentUser, newPassword);
+      showNotification('Пароль успешно изменен');
+      document.getElementById('change-password-modal').classList.add('hidden');
     } catch (error) {
-      let message = "Ошибка входа";
-      switch(error.code) {
-        case "auth/invalid-email": message = "Неверный email"; break;
-        case "auth/user-not-found": message = "Пользователь не найден"; break;
-        case "auth/wrong-password": message = "Неверный пароль"; break;
-        case "auth/too-many-requests": message = "Слишком много попыток"; break;
-      }
-      showNotification(message, 'error');
+      showNotification('Ошибка при смене пароля', 'error');
     } finally {
-      btnText.classList.remove('hidden');
-      btnLoader.classList.add('hidden');
       hideLoading();
     }
   });
-
-  // Обработчик регистрации
-  signupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('signup-name').value;
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    
-    const btnText = signupBtn.querySelector('.btn-text');
-    const btnLoader = signupBtn.querySelector('.btn-loader');
-    
-    btnText.classList.add('hidden');
-    btnLoader.classList.remove('hidden');
-    showLoading();
-    
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await set(ref(db, `users/${userCredential.user.uid}`), {
-        name,
-        email,
-        balance: 0,
-        tiktok: "",
-        youtube: ""
-      });
-      
-      showNotification("Регистрация успешна!");
-      document.getElementById('login-tab').click();
-    } catch (error) {
-      let message = "Ошибка регистрации";
-      switch(error.code) {
-        case "auth/email-already-in-use": message = "Email уже используется"; break;
-        case "auth/invalid-email": message = "Неверный email"; break;
-        case "auth/weak-password": message = "Пароль от 6 символов"; break;
+  
+  // Загрузка аватарки
+  document.getElementById('avatar-input')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      showLoading('Загрузка аватарки...');
+      try {
+        // Здесь реализация загрузки на ваш сервер или Firebase Storage
+        // Примерная реализация:
+        const avatarUrl = await uploadAvatar(file); // Ваша функция загрузки
+        await updateProfile(auth.currentUser, { photoURL: avatarUrl });
+        document.getElementById('avatar-preview').src = avatarUrl;
+        showNotification('Аватар успешно обновлен');
+      } catch (error) {
+        showNotification('Ошибка при загрузке аватарки', 'error');
+      } finally {
+        hideLoading();
       }
-      showNotification(message, 'error');
-    } finally {
-      btnText.classList.remove('hidden');
-      btnLoader.classList.add('hidden');
-      hideLoading();
-    }
-  });
-
-  // Обработчик выхода
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#logout-btn-top')) {
-      showLoading();
-      signOut(auth).then(() => {
-        showNotification("До новых встреч!");
-      }).catch(() => {
-        showNotification("Ошибка выхода", 'error');
-      }).finally(hideLoading);
-    }
-  });
-
-  // Отслеживание состояния аутентификации
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      authScreen.classList.add('hidden');
-      appScreen.classList.remove('hidden');
-      loadSection('main', user.uid);
-    } else {
-      authScreen.classList.remove('hidden');
-      appScreen.classList.add('hidden');
     }
   });
 }
