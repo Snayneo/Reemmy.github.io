@@ -1,8 +1,7 @@
-// firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔐 Firebase конфиг — из консоли Firebase
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDCAsvKNtfZqN7wlvDMV_sI8Hn-6cYoGr4",
   authDomain: "reemmy-fdnbf276454rfgh-1.firebaseapp.com",
@@ -14,17 +13,9 @@ const firebaseConfig = {
   measurementId: "G-7EMR3G2TN9"
 };
 
-// Инициализация Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Экспортируем функции
-export { auth };
-
-export async function registerUser(email, password) {
-  return await createUserWithEmailAndPassword(auth, email, password);
-}
-
-export async function loginUser(email, password) {
-  return await signInWithEmailAndPassword(auth, email, password);
-}
+// Export functions
+export { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut };
