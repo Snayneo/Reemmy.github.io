@@ -7,6 +7,8 @@
   --ios-card: #FFFFFF;
   --ios-separator: #E5E5EA;
   --ios-light-text: #8E8E93;
+  --tiktok-pink: #FE2C55;
+  --youtube-red: #FF0000;
 }
 
 * {
@@ -250,6 +252,7 @@ body {
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: relative;
 }
 
 .card-image {
@@ -338,6 +341,32 @@ body {
 }
 
 /* Materials */
+.materials-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--ios-separator);
+  background: var(--ios-card);
+  color: var(--ios-light-text);
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: var(--ios-blue);
+  color: white;
+  border-color: var(--ios-blue);
+}
+
 .loading-placeholder {
   text-align: center;
   padding: 40px 20px;
@@ -352,11 +381,38 @@ body {
 
 .material-item {
   margin-bottom: 16px;
+  position: relative;
+}
+
+.material-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.material-badge.tiktok {
+  background-color: var(--tiktok-pink);
+}
+
+.material-badge.youtube {
+  background-color: var(--youtube-red);
+}
+
+.material-badge.other {
+  background-color: var(--ios-blue);
 }
 
 .material-item h3 {
   margin-bottom: 8px;
   color: var(--ios-dark);
+  padding-right: 40px;
 }
 
 .material-item p {
@@ -366,6 +422,16 @@ body {
 
 .material-item strong {
   color: var(--ios-blue);
+}
+
+.material-link {
+  color: var(--ios-blue);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.material-link:hover {
+  text-decoration: underline;
 }
 
 .material-actions {
@@ -398,6 +464,16 @@ body {
   font-size: 16px;
 }
 
+/* Animation for loading spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
   .auth-container {
@@ -420,14 +496,4 @@ body {
     font-size: 18px;
     padding: 5px;
   }
-}
-
-/* Animation for loading spinner */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.fa-spinner {
-  animation: spin 1s linear infinite;
 }
