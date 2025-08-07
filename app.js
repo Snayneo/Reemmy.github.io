@@ -32,16 +32,81 @@ const showSignupPassword = document.getElementById('show-signup-password');
 const userDataTemplate = {
   name: "",
   email: "",
-  tiktok: "",
-  youtube: "",
   balance: 0,
   rewards: {},
   materials: {}
 };
 
-// Шаблоны контента (остаются без изменений)
+// Шаблоны контента
 const sections = {
-  // ... (такие же как в предыдущем коде)
+  main: `
+    <div class="ios-section">
+      <h2 class="ios-title">Главная</h2>
+      <div class="ios-card news-card">
+        <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Reemmy" class="card-image">
+        <h3>Reemmy - зарабатывать легко!</h3>
+        <p>Начните зарабатывать уже сегодня, размещая рекламу в своих соцсетях</p>
+      </div>
+      <div class="ios-card">
+        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Заработок" class="card-image">
+        <h3><i class="fas fa-question-circle"></i> Почему мы?</h3>
+        <p>Мы платим за каждые 1000 просмотров вашего видео с нашей рекламой</p>
+        <ul class="benefits-list">
+          <li><i class="fas fa-check-circle"></i> Высокие ставки</li>
+          <li><i class="fas fa-check-circle"></i> Быстрые выплаты</li>
+          <li><i class="fas fa-check-circle"></i> Поддержка 24/7</li>
+        </ul>
+      </div>
+    </div>
+  `,
+  materials: `
+    <div class="ios-section">
+      <h2 class="ios-title">Доступные задания</h2>
+      <div class="task-list">
+        <div class="task-card">
+          <div class="task-header">
+            <h3><i class="fas fa-ad"></i> Реклама приложения</h3>
+            <span class="task-reward">+500₽</span>
+          </div>
+          <p>Разместите рекламу нашего приложения в своем TikTok</p>
+          <button class="ios-button small">Взять задание</button>
+        </div>
+      </div>
+    </div>
+  `,
+  stats: `
+    <div class="ios-section">
+      <h2 class="ios-title">Ваша статистика</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Выполнено заданий</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">0₽</div>
+          <div class="stat-label">Текущий баланс</div>
+        </div>
+      </div>
+    </div>
+  `,
+  profile: `
+    <div class="ios-section">
+      <h2 class="ios-title">Ваш профиль</h2>
+      <div class="profile-header">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="profile-info">
+          <h3 id="profile-name">Гость</h3>
+          <p id="profile-email">Email: loading...</p>
+          <p id="profile-balance">Баланс: 0₽</p>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="ios-button" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+      </div>
+    </div>
+  `
 };
 
 // Показать уведомление
@@ -92,6 +157,7 @@ async function loadProfileData(userId) {
     if (snapshot.exists()) {
       const userData = snapshot.val();
       document.getElementById('profile-name').textContent = userData.name || "Пользователь";
+      document.getElementById('profile-email').textContent = `Email: ${userData.email}`;
       document.getElementById('profile-balance').textContent = `Баланс: ${userData.balance || 0}₽`;
     }
   } catch (error) {
@@ -201,6 +267,9 @@ function initApp() {
       
       await set(ref(db, `users/${user.uid}`), userData);
       showNotification("Регистрация прошла успешно");
+      
+      // Очищаем форму регистрации
+      signupForm.reset();
       
       // Переключаем на вкладку входа после успешной регистрации
       document.getElementById('login-tab').click();
