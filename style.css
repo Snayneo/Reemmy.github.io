@@ -1,244 +1,433 @@
-/* iOS стиль */
-.ios-style {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(180deg, #F2F2F7, #E5E5EA);
-  color: #1C1C1E;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  overflow: hidden;
+:root {
+  --ios-blue: #007AFF;
+  --ios-red: #FF3B30;
+  --ios-green: #34C759;
+  --ios-gray: #F2F2F7;
+  --ios-dark: #1C1C1E;
+  --ios-card: #FFFFFF;
+  --ios-separator: #E5E5EA;
+  --ios-light-text: #8E8E93;
 }
 
-/* Контейнеры */
-.screen {
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--ios-gray);
+  color: var(--ios-dark);
+  height: 100vh;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  color: white;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease-out;
+  max-width: 300px;
+}
+
+.notification.success {
+  background-color: var(--ios-green);
+}
+
+.notification.error {
+  background-color: var(--ios-red);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Auth Screen */
+#auth-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  background-color: var(--ios-gray);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  background: var(--ios-card);
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--ios-blue);
+  margin-bottom: 10px;
+}
+
+.logo-container p {
+  color: var(--ios-light-text);
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--ios-separator);
+}
+
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--ios-light-text);
+  transition: all 0.2s;
+}
+
+.auth-tab.active {
+  border-bottom: 2px solid var(--ios-blue);
+  color: var(--ios-blue);
+  font-weight: 500;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.input-group i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ios-light-text);
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 10px;
+  font-size: 16px;
+  background: var(--ios-card);
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--ios-blue);
+}
+
+.ios-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: var(--ios-blue);
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
+}
+
+.ios-button:hover {
+  opacity: 0.9;
+}
+
+.ios-button.small {
+  padding: 8px 12px;
+  font-size: 14px;
+  width: auto;
+}
+
+.ios-button.danger {
+  background: var(--ios-red);
+  margin-top: 30px;
+}
+
+.ios-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-text, .btn-loader {
+  display: inline-block;
+}
+
+.btn-loader {
+  margin-left: 8px;
+}
+
+/* App Screen */
+#app-screen {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-.ios-section {
-  padding: 16px;
+.content {
   flex: 1;
   overflow-y: auto;
+  padding-bottom: 80px;
+  -webkit-overflow-scrolling: touch;
 }
 
-.content {
-  transition: opacity 0.2s ease-in-out;
-}
-
-.ios-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease-in-out;
-}
-
-.ios-card:hover {
-  transform: translateY(-2px);
-}
-
-/* Типография */
-.auth-title {
-  font-size: 36px;
-  font-weight: 700;
-  text-align: center;
-  margin: 20px 0;
-  color: #007AFF;
-}
-
-.ios-title {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 20px 0;
-}
-
-.center-text {
-  text-align: center;
-  font-size: 18px;
-  color: #8E8E93;
-}
-
-/* Нижний таббар */
+/* iOS Tab Bar */
 .ios-tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: space-around;
-  background: white;
-  border-top: 1px solid #E5E5EA;
+  background: var(--ios-card);
+  border-top: 1px solid var(--ios-separator);
   padding: 10px 0;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  z-index: 100;
 }
 
 .tab-btn {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: none;
   border: none;
-  color: #8E8E93;
+  color: var(--ios-light-text);
   font-size: 12px;
-  padding: 8px;
-  transition: color 0.2s ease-in-out;
+  padding: 5px 0;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .tab-btn.active {
-  color: #007AFF;
+  color: var(--ios-blue);
 }
 
 .tab-btn i {
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 4px;
 }
 
-/* Формы */
-.input-group {
+/* Sections */
+.ios-section {
+  padding: 16px;
+}
+
+.ios-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-top: 10px;
+}
+
+.ios-card {
+  background: var(--ios-card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  height: 150px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.benefits-list {
+  margin-top: 10px;
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.benefits-list li {
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  background: #F7F7F7;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #E5E5EA;
 }
 
-.input-group i {
-  margin-right: 12px;
-  color: #8E8E93;
+.benefits-list i {
+  color: var(--ios-blue);
+  margin-right: 10px;
+  font-size: 18px;
 }
 
-.input-group input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  background: transparent;
-}
-
-.ios-button {
-  background: #007AFF;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 12px;
-  cursor: pointer;
-  transition: transform 0.1s, opacity 0.1s;
-}
-
-.ios-button:hover {
-  transform: scale(0.98);
-  opacity: 0.9;
-}
-
-.ios-button.secondary {
-  background: transparent;
-  color: #007AFF;
-}
-
-.ios-button.red {
-  background: #FF3B30;
-}
-
-.ios-button.small {
-  padding: 8px 16px;
-  font-size: 14px;
-}
-
-/* Профиль */
+/* Profile */
 .profile-header {
   text-align: center;
   margin-bottom: 20px;
   position: relative;
+  padding-top: 10px;
 }
 
-.top-right {
-  position: absolute;
-  top: 0;
-  right: 0;
+.avatar {
+  font-size: 60px;
+  color: var(--ios-blue);
+  margin-bottom: 10px;
 }
 
 .balance {
   font-size: 20px;
-  margin: 12px 0;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .balance strong {
-  color: #007AFF;
+  color: var(--ios-blue);
 }
 
-/* Материалы */
-.material-item {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.button-container {
-  display: flex;
-  justify-content: flex-start;
-}
-
-/* Новости */
-.news-image {
+.profile-input {
   width: 100%;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  padding: 10px 15px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 14px;
 }
 
-/* Модальное окно */
-.modal {
-  position: fixed;
+.profile-input:focus {
+  outline: none;
+  border-color: var(--ios-blue);
+}
+
+.logout-btn-top {
+  position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--ios-light-text);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px;
+  transition: color 0.2s;
+}
+
+.logout-btn-top:hover {
+  color: var(--ios-red);
+}
+
+/* Materials */
+.loading-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ios-light-text);
+}
+
+.loading-placeholder i {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: var(--ios-blue);
+}
+
+.material-item {
+  margin-bottom: 16px;
+}
+
+.material-item h3 {
+  margin-bottom: 8px;
+  color: var(--ios-dark);
+}
+
+.material-item p {
+  margin-bottom: 8px;
+  color: var(--ios-light-text);
+}
+
+.material-item strong {
+  color: var(--ios-blue);
+}
+
+.material-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.take-btn {
+  background-color: var(--ios-blue);
+  color: white;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  transition: opacity 0.2s ease-in-out;
 }
 
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
+/* Stats */
+.stats-placeholder {
   text-align: center;
-  transform: scale(0.9);
-  transition: transform 0.2s ease-in-out;
+  padding: 40px 0;
+  color: var(--ios-light-text);
 }
 
-.modal:not(.hidden) .modal-content {
-  transform: scale(1);
+.stats-placeholder i {
+  font-size: 50px;
+  margin-bottom: 20px;
+  color: var(--ios-blue);
 }
 
-.modal-buttons {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 20px;
+.stats-placeholder p {
+  font-size: 16px;
 }
 
-.hidden {
-  display: none;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-  .ios-section {
-    padding: 12px;
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 20px;
   }
+  
   .ios-title {
     font-size: 24px;
   }
-  .ios-card {
-    padding: 16px;
+  
+  .card-image {
+    height: 120px;
   }
-  .ios-button {
-    padding: 10px;
+  
+  .profile-header {
+    padding-top: 5px;
   }
+  
+  .logout-btn-top {
+    font-size: 18px;
+    padding: 5px;
+  }
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fa-spinner {
+  animation: spin 1s linear infinite;
 }
