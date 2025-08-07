@@ -2,13 +2,13 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  background-color: #0f0f1a; /* Тёмный фон */
+  color: #f4f4f4; /* Светлый текст */
   text-align: center;
 }
 
 header {
-  background-color: #4f46e5;
+  background-color: #6a0dad; /* Фиолетовый */
   color: white;
   padding: 2rem;
 }
@@ -25,10 +25,12 @@ section ul {
 section li {
   margin: 1rem 0;
   font-size: 1.2rem;
+  color: #d8b4fe; /* Светло-фиолетовый акцент */
 }
 
 footer {
-  background-color: #e5e7eb;
+  background-color: #1a1a2e;
+  color: #ccc;
   padding: 1rem;
   font-size: 0.9rem;
 }
