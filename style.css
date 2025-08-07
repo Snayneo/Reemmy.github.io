@@ -1,7 +1,7 @@
 /* iOS стиль */
 .ios-style {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--ios-gray);
+  background-color: #F2F2F7;
   color: #1C1C1E;
   margin: 0;
   padding: 0;
@@ -17,6 +17,8 @@
 
 .ios-section {
   padding: 16px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .ios-card {
@@ -32,6 +34,12 @@
   font-size: 28px;
   font-weight: 600;
   margin: 0 0 20px 0;
+}
+
+.center-text {
+  text-align: center;
+  font-size: 18px;
+  color: #8E8E93;
 }
 
 /* Нижний таббар */
@@ -55,7 +63,7 @@
 }
 
 .tab-btn.active {
-  color: var(--ios-blue);
+  color: #007AFF;
 }
 
 .tab-btn i {
@@ -86,27 +94,42 @@
 }
 
 .ios-button {
-  background: var(--ios-blue);
+  background: #007AFF;
   color: white;
   border: none;
   border-radius: 10px;
   padding: 12px;
-  width: 100%;
   font-size: 16px;
   font-weight: 500;
   margin-top: 10px;
+  cursor: pointer;
+}
+
+.ios-button.secondary {
+  background: transparent;
+  color: #007AFF;
+}
+
+.ios-button.red {
+  background: #FF3B30;
+}
+
+.ios-button.small {
+  padding: 8px 16px;
+  font-size: 14px;
 }
 
 /* Профиль */
 .profile-header {
   text-align: center;
   margin-bottom: 20px;
+  position: relative;
 }
 
-.avatar {
-  font-size: 60px;
-  color: var(--ios-blue);
-  margin-bottom: 10px;
+.top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .balance {
@@ -115,5 +138,56 @@
 }
 
 .balance strong {
-  color: var(--ios-blue);
+  color: #007AFF;
+}
+
+/* Материалы */
+.material-item {
+  display: flex;
+ល
+  flex-direction: column;
+  gap: 10px;
+}
+
+.material-item .ios-button {
+  align-self: flex-start;
+}
+
+/* Новости */
+.news-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* Модальное окно */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
 }
