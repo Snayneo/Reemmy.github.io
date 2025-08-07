@@ -1,151 +1,141 @@
-/* Общие стили */
-body {
-  font-family: Arial, sans-serif;
+/* Базовые стили */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f5f5;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .hidden {
   display: none !important;
 }
 
-/* Стили для авторизации */
+/* Стили авторизации */
 .auth-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 2rem;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-.auth-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.auth-container h1 {
+  margin-bottom: 2rem;
+  color: #4285f4;
 }
 
 .auth-container input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 1rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
 .auth-container button {
   width: 100%;
-  padding: 10px;
-  background-color: #4285f4;
-  color: white;
+  padding: 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 0.5rem;
 }
 
-.auth-container button:hover {
-  background-color: #357ae8;
+#login-btn {
+  background-color: #4285f4;
+  color: white;
 }
 
 #signup-btn {
-  background-color: #34a853;
+  background-color: #f1f1f1;
+  color: #333;
 }
 
-#signup-btn:hover {
-  background-color: #2d8e49;
-}
-
-/* Стили для основного приложения */
-.app-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.app-container header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-#logout-btn {
-  padding: 8px 16px;
-  background-color: #ea4335;
+/* Главное меню */
+header {
+  padding: 1rem;
+  background-color: #4285f4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#logout-btn:hover {
-  background-color: #d33426;
+  text-align: center;
 }
 
 .content {
-  padding: 20px;
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
-#add-form {
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.card i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #4285f4;
+}
+
+/* Нижняя панель навигации */
+.bottom-nav {
   display: flex;
-  margin-bottom: 20px;
+  justify-content: space-around;
+  padding: 0.5rem;
+  background: white;
+  border-top: 1px solid #ddd;
 }
 
-#add-form input {
-  flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px 0 0 4px;
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  padding: 0.5rem;
+  cursor: pointer;
 }
 
-#add-form button {
-  padding: 10px 20px;
+.nav-btn.active {
+  color: #4285f4;
+}
+
+/* Профиль */
+.profile-info {
+  text-align: center;
+  padding: 2rem;
+}
+
+.avatar {
+  font-size: 5rem;
+  color: #4285f4;
+  margin-bottom: 1rem;
+}
+
+#change-password-btn {
+  padding: 0.8rem 1.5rem;
   background-color: #4285f4;
   color: white;
   border: none;
-  border-radius: 0 4px 4px 0;
+  border-radius: 5px;
+  margin-top: 1rem;
   cursor: pointer;
-}
-
-#add-form button:hover {
-  background-color: #357ae8;
-}
-
-#items-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#items-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-#items-list li:last-child {
-  border-bottom: none;
-}
-
-#items-list li button {
-  padding: 5px 10px;
-  background-color: #ea4335;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#items-list li button:hover {
-  background-color: #d33426;
 }
