@@ -629,3 +629,59 @@ body {
     padding: 5px;
   }
 }
+/* Новые стили для улучшений */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  font-size: 50px;
+  color: var(--ios-blue);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Новые изображения карточек */
+.ios-card.news-card .card-image {
+  background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.ios-card:nth-child(2) .card-image {
+  background: linear-gradient(45deg, #b8cbb8 0%, #b465da 100%);
+}
+
+.ios-card:nth-child(3) .card-image {
+  background: linear-gradient(45deg, #3a1c71 0%, #d76d77 100%);
+}
+
+/* Анимации кнопок */
+.ios-button {
+  transition: all 0.3s ease;
+}
+
+.ios-button:active {
+  transform: scale(0.98);
+}
+
+/* Улучшенные уведомления */
+.notification {
+  max-width: 90%;
+  right: 10px;
+  left: 10px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 12px 15px;
+}
