@@ -2,23 +2,86 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Firebase Задания</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reemmy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="auth-section">
-    <h2>Вход</h2>
-    <button id="login-btn">Войти</button>
+<body class="ios-style">
+  <!-- Notification -->
+  <div id="notification" class="notification hidden"></div>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen">
+    <div class="auth-container">
+      <div class="logo-container">
+        <div class="logo-text">Reemmy</div>
+        <p>Зарабатывайте на рекламе</p>
+      </div>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="login-tab">Вход</div>
+        <div class="auth-tab" id="signup-tab">Регистрация</div>
+      </div>
+      
+      <form id="login-form">
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="login-email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="login-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="ios-button">Войти</button>
+      </form>
+      
+      <form id="signup-form" class="hidden">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="signup-name" placeholder="Ваше имя" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signup-email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="signup-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="ios-button">Зарегистрироваться</button>
+      </form>
+    </div>
   </div>
 
-  <div id="app-section" style="display: none;">
-    <h2>Ваши задания</h2>
-    <input id="task-input" type="text" placeholder="Новое задание">
-    <button id="save-btn">Сохранить</button>
-    <ul id="task-list"></ul>
-    <button id="logout-btn">Выйти</button>
+  <!-- Main App Screen -->
+  <div id="app-screen" class="hidden">
+    <div class="content" id="dynamic-content">
+      <!-- Content will be loaded dynamically -->
+    </div>
+
+    <!-- iOS Style Tab Bar -->
+    <nav class="ios-tabbar">
+      <button class="tab-btn active" data-section="main">
+        <i class="fas fa-home"></i>
+        <span>Главная</span>
+      </button>
+      <button class="tab-btn" data-section="materials">
+        <i class="fas fa-ad"></i>
+        <span>Задания</span>
+      </button>
+      <button class="tab-btn" data-section="stats">
+        <i class="fas fa-chart-line"></i>
+        <span>Статистика</span>
+      </button>
+      <button class="tab-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
+    </nav>
   </div>
 
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
