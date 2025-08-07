@@ -24,7 +24,7 @@ body {
   height: 100vh;
   overflow: hidden;
   line-height: 1.5;
-  padding-top: 8px; /* Добавлен отступ сверху */
+  padding-bottom: 5px;
 }
 
 .hidden {
@@ -34,7 +34,7 @@ body {
 /* Notification */
 .notification {
   position: fixed;
-  top: 28px; /* Скорректировано с учетом отступа */
+  top: 20px;
   right: 20px;
   padding: 15px 20px;
   border-radius: 10px;
@@ -63,7 +63,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 8px); /* Учет отступа */
+  height: 100vh;
   padding: 20px;
   background-color: var(--ios-gray);
 }
@@ -188,7 +188,7 @@ body {
 #app-screen {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 8px); /* Учет отступа */
+  height: calc(100vh - 5px);
 }
 
 .content {
@@ -196,12 +196,13 @@ body {
   overflow-y: auto;
   padding-bottom: 80px;
   -webkit-overflow-scrolling: touch;
+  padding-top: 15px;
 }
 
 /* iOS Tab Bar */
 .ios-tabbar {
   position: fixed;
-  bottom: 8px; /* Поднято на 8px от нижнего края */
+  bottom: 5px;
   left: 0;
   right: 0;
   display: flex;
@@ -423,6 +424,7 @@ body {
 .material-description {
   min-height: 40px;
   margin-bottom: 12px;
+  color: var(--ios-dark);
 }
 
 .material-details {
@@ -434,6 +436,7 @@ body {
 
 .material-details p {
   margin-bottom: 6px;
+  color: var(--ios-dark);
 }
 
 .material-link {
@@ -575,6 +578,11 @@ body {
   color: var(--ios-green);
 }
 
+.status-badge.pending {
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--ios-blue);
+}
+
 /* Animation for loading spinner */
 @keyframes spin {
   0% { transform: rotate(0deg); }
@@ -583,6 +591,19 @@ body {
 
 .fa-spinner {
   animation: spin 1s linear infinite;
+}
+
+.notice-card {
+  background-color: #FFF8E1;
+  border-left: 4px solid #FFC107;
+  padding: 12px;
+  margin-top: 20px;
+  border-radius: 0 8px 8px 0;
+}
+
+.notice-card p {
+  color: #5D4037;
+  font-size: 14px;
 }
 
 /* Responsive adjustments */
