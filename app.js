@@ -10,15 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut,
-  sendEmailVerification,
-  updatePassword,
-  updateProfile,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  multiFactor,
-  PhoneAuthProvider,
-  RecaptchaVerifier
+  signOut
 } from './firebase.js';
 
 // DOM элементы
@@ -29,69 +21,6 @@ const tabButtons = document.querySelectorAll('.tab-btn');
 const loginForm = document.getElementById('login-form');
 const signupForm = document.getElementById('signup-form');
 const notification = document.getElementById('notification');
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
-const mfaModal = document.getElementById('mfa-modal');
-const mfaPhoneStep = document.getElementById('mfa-phone-step');
-const mfaCodeStep = document.getElementById('mfa-code-step');
-const mfaPhoneInput = document.getElementById('mfa-phone');
-const mfaCodeInput = document.getElementById('mfa-code');
-const mfaPhoneConfirm = document.getElementById('mfa-phone-confirm');
-const mfaCodeConfirm = document.getElementById('mfa-code-confirm');
-const mfaPhoneCancel = document.getElementById('mfa-phone-cancel');
-const mfaCodeCancel = document.getElementById('mfa-code-cancel');
-
-// Переменные для reCAPTCHA и MFA
-let recaptchaVerifier;
-let verificationId;
-
-// Инициализация reCAPTCHA
-function initRecaptcha() {
-  recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-    size: 'normal',
-    callback: () => {
-      loginBtn.disabled = false;
-    },
-    'expired-callback': () => {
-      loginBtn.disabled = true;
-      showNotification('reCAPTCHA истек, обновите страницу', 'error');
-    }
-  }, auth);
-  recaptchaVerifier.render();
-}
-
-// Показать модальное окно MFA
-function showMfaModal(step = 'phone') {
-  mfaModal.classList.remove('hidden');
-  if (step === 'phone') {
-    mfaPhoneStep.classList.remove('hidden');
-    mfaCodeStep.classList.add('hidden');
-    // Инициализация reCAPTCHA для MFA
-    const mfaRecaptcha = new RecaptchaVerifier('recaptcha-container-mfa', {
-      size: 'normal',
-      callback: () => {
-        mfaPhoneConfirm.disabled = false;
-      },
-      'expired-callback': () => {
-        mfaPhoneConfirm.disabled = true;
-        showNotification('reCAPTCHA истек, попробуйте снова', 'error');
-      }
-    }, auth);
-    mfaRecaptcha.render();
-  } else {
-    mfaPhoneStep.classList.add('hidden');
-    mfaCodeStep.classList.remove('hidden');
-  }
-}
-
-// Скрыть модальное окно MFA
-function hideMfaModal() {
-  mfaModal.classList.add('hidden');
-  mfaPhoneStep.classList.remove('hidden');
-  mfaCodeStep.classList.add('hidden');
-  mfaPhoneInput.value = '';
-  mfaCodeInput.value = '';
-}
 
 // Структура данных пользователя
 const userDataTemplate = {
@@ -101,9 +30,7 @@ const userDataTemplate = {
   youtube: "",
   balance: 0,
   rewards: {},
-  materials: {},
-  mfaEnabled: false,
-  phoneNumber: ""
+  materials: {}
 };
 
 // Шаблоны контента
@@ -112,22 +39,29 @@ const sections = {
     <div class="ios-section">
       <h2 class="ios-title">Главная</h2>
       <div class="ios-card news-card">
-        <img src="https://images.unsplash.com/photo-1611162617213-7d7a控制器
-        <h3>Reemmy - ваш заработок в соцсетях!</h3>
-        <p>Монетизируйте ваш контент легко и просто с нашей платформой</p>
+        <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Reemmy" class="card-image">
+        <h3>Reemmy - зарабатывать легко!</h3>
+        <p>Начните зарабатывать уже сегодня, размещая рекламу в своих соцсетях</p>
       </div>
       <div class="ios-card">
         <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Заработок" class="card-image">
-        <h3><i class="fas fa-star"></i> Преимущества</h3>
-        <p>Только проверенные рекламодатели и стабильные выплаты</p>
+        <h3><i class="fas fa-question-circle"></i> Почему мы?</h3>
+        <p>Мы платим за каждые 1000 просмотров вашего видео с нашей рекламой</p>
         <ul class="benefits-list">
-          <li><i class="fas fa-check-circle"></i> До 500₽ за 1000 просмотров</li>
-          <li><i class="fas fa-check-circle"></i> Вывод от 100₽</li>
+          <li><i class="fas fa-check-circle"></i> Высокие ставки</li>
+          <li><i class="fas fa-check-circle"></i> Быстрые выплаты</li>
           <li><i class="fas fa-check-circle"></i> Поддержка 24/7</li>
         </ul>
       </div>
+      <div class="ios-card">
+        <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Поддержка" class="card-image">
+        <h3><i class="fas fa-headset"></i> Поддержка</h3>
+        <p>Email: support@reemmy.ru</p>
+        <p>Телефон: +7 (123) 456-78-90</p>
+        <p>Telegram: @reemmy_support</p>
+      </div>
       <div class="notice-card">
-        <p><strong>Важная информация:</strong> Reemmy — это независимая партнерская платформа. Мы предоставляем рекламные материалы, которые вы интегрируете в свой контент. Вознаграждение начисляется за подтвержденные просмотры. Участие полностью бесплатное.</p>
+        <p><strong>Важное уведомление:</strong> Reemmy — это неофициальная партнерская программа, не связанная с TikTok. Мы предоставляем рекламные материалы, вы встраиваете их в свои ролики, мы платим за просмотры. Платформа полностью бесплатна для использования.</p>
       </div>
     </div>
   `,
@@ -164,12 +98,8 @@ const sections = {
   profile: `
     <div class="ios-section">
       <div class="profile-header">
-        <div class="avatar-upload">
-          <img id="avatar-preview" class="avatar-preview">
-          <label class="avatar-upload-btn">
-            Изменить аватар
-            <input type="file" id="avatar-input" accept="image/*" style="display: none;">
-          </label>
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
         </div>
         <h2 id="profile-name">Загрузка...</h2>
         <div class="balance">
@@ -180,26 +110,24 @@ const sections = {
           <i class="fas fa-sign-out-alt"></i>
         </button>
       </div>
-      
       <div class="ios-card">
-        <h3><i class="fas fa-user-edit"></i> Личные данные</h3>
-        <input type="text" id="name-input" placeholder="Ваше имя" class="profile-input">
-        <button class="ios-button small" id="save-name">
-          <span class="btn-text">Сохранить имя</span>
+        <h3><i class="fab fa-tiktok"></i> TikTok</h3>
+        <p id="profile-tiktok">Не указан</p>
+        <input type="text" id="tiktok-input" placeholder="@username" class="profile-input">
+        <button class="ios-button small" id="save-tiktok">
+          <span class="btn-text">Сохранить</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
       </div>
-      
       <div class="ios-card">
-        <h3><i class="fas fa-lock"></i> Безопасность</h3>
-        <button class="ios-button small" id="change-password-btn">
-          Сменить пароль
-        </button>
-        <button class="ios-button small" id="mfa-btn">
-          <span class="btn-text">Настроить двухфакторную аутентификацию</span>
+        <h3><i class="fab fa-youtube"></i> YouTube</h3>
+        <p id="profile-youtube">Не указан</p>
+        <input type="text" id="youtube-input" placeholder="ID канала" class="profile-input">
+        <button class="ios-button small" id="save-youtube">
+          <span class="btn-text">Сохранить</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
       </div>
-      
-      <div id="email-verify-container"></div>
     </div>
   `
 };
@@ -215,56 +143,18 @@ function showNotification(message, type = 'success') {
   }, 3000);
 }
 
-// Показать загрузку
-function showLoading(message = 'Загрузка...') {
-  const overlay = document.createElement('div');
-  overlay.className = 'loading-overlay';
-  overlay.innerHTML = `
-    <div class="loading-content">
-      <i class="fas fa-spinner loading-spinner"></i>
-      <p>${message}</p>
-    </div>
-  `;
-  overlay.id = 'loading-overlay';
-  document.body.appendChild(overlay);
-}
-
-// Скрыть загрузку
-function hideLoading() {
-  const overlay = document.getElementById('loading-overlay');
-  if (overlay) overlay.remove();
-}
-
-// Показать модальное окно подтверждения выхода
-function showLogoutModal() {
-  const modal = document.getElementById('logout-modal');
-  modal.classList.remove('hidden');
-  
-  document.getElementById('logout-cancel').addEventListener('click', () => {
-    modal.classList.add('hidden');
-  }, { once: true });
-  
-  document.getElementById('logout-confirm').addEventListener('click', async () => {
-    modal.classList.add('hidden');
-    showLoading('Выход из системы...');
-    try {
-      await signOut(auth);
-      showNotification('Вы успешно вышли из аккаунта');
-    } catch (error) {
-      showNotification('Ошибка при выходе', 'error');
-    } finally {
-      hideLoading();
-    }
-  }, { once: true });
-}
-
 // Загрузка данных пользователя
 async function loadUserData(uid) {
   const snapshot = await get(ref(db, `users/${uid}`));
   return snapshot.exists() ? snapshot.val() : null;
 }
 
-// Загрузка материалов
+// Сохранение данных пользователя
+async function saveUserData(uid, data) {
+  await update(ref(db, `users/${uid}`), data);
+}
+
+// Загрузка материалов из Firebase
 async function loadMaterials() {
   try {
     const snapshot = await get(ref(db, 'Materials'));
@@ -276,7 +166,7 @@ async function loadMaterials() {
   }
 }
 
-// Отображение материалов
+// Отображение материалов с фильтрацией
 async function displayMaterials(filterPlatform = 'all') {
   const materialsList = document.getElementById('materials-list');
   materialsList.innerHTML = `
@@ -299,275 +189,391 @@ async function displayMaterials(filterPlatform = 'all') {
     return;
   }
 
-  let filteredMaterials = Object.entries(materials).filter(([_, material]) => {
-    if (filterPlatform === 'all') return true;
-    return material.platform === filterPlatform;
-  });
+  if (Object.keys(materials).length === 0) {
+    materialsList.innerHTML = `
+      <div class="ios-card">
+        <p>Нет доступных заданий</p>
+      </div>
+    `;
+    return;
+  }
+
+  let filteredMaterials = Object.entries(materials);
+  
+  if (filterPlatform !== 'all') {
+    filteredMaterials = filteredMaterials.filter(([_, material]) => 
+      material.platform === filterPlatform
+    );
+  }
 
   if (filteredMaterials.length === 0) {
     materialsList.innerHTML = `
       <div class="ios-card">
-        <p>Нет доступных заданий для выбранной платформы.</p>
+        <p>Нет заданий для выбранной платформы</p>
       </div>
     `;
     return;
   }
 
   materialsList.innerHTML = filteredMaterials.map(([id, material]) => {
-    const userMaterial = userData?.materials?.[id] || {};
-    const status = userMaterial.status || 'available';
-    const comment = userMaterial.comment || '';
-
+    const userMaterial = userData?.materials?.[id];
+    const isAccepted = !!userMaterial;
+    const isCompleted = userMaterial?.status === 'completed';
+    const isPending = userMaterial?.status === 'pending';
+    
     return `
-      <div class="ios-card material-item">
-        <div class="material-badge ${material.platform}">
-          <i class="fab fa-${material.platform}"></i>
-        </div>
-        <h3>${material.title}</h3>
-        <p class="material-description">${material.description}</p>
-        <div class="material-details">
-          <p><strong>Вознаграждение:</strong> ${material.reward} ₽</p>
-          <p><strong>Платформа:</strong> ${material.platform}</p>
-          <p><strong>Срок:</strong> ${material.deadline}</p>
-        </div>
-        <a href="${material.link}" target="_blank" class="material-link">
-          <i class="fas fa-link"></i> Перейти к материалу
-        </a>
-        <div class="material-actions">
-          <button class="ios-button small take-btn ${status !== 'available' ? 'hidden' : ''}" data-id="${id}">
-            <span class="btn-text">Взять задание</span>
-          </button>
-          <button class="ios-button small in-progress-btn ${status !== 'in-progress' ? 'hidden' : ''}" disabled>
-            <span class="btn-text">В процессе</span>
-          </button>
-          <button class="ios-button small completed-btn ${status !== 'completed' ? 'hidden' : ''}" disabled>
-            <span class="btn-text">Завершено</span>
-          </button>
-          <button class="ios-button small rejected-btn ${status !== 'rejected' ? 'hidden' : ''}" disabled>
-            <span class="btn-text">Отклонено</span>
-          </button>
-        </div>
-        ${status === 'rejected' ? `
-          <div class="task-comment">
-            <strong>Комментарий модератора:</strong> ${comment}
-          </div>
-          <button class="ios-button small retry-btn" data-id="${id}">
-            <span class="btn-text">Повторить</span>
-          </button>
-        ` : ''}
+    <div class="ios-card material-item" data-id="${id}" data-platform="${material.platform || 'other'}">
+      <div class="material-badge ${material.platform || 'other'}">
+        ${material.platform === 'tiktok' ? '<i class="fab fa-tiktok"></i>' : 
+          material.platform === 'youtube' ? '<i class="fab fa-youtube"></i>' : ''}
       </div>
+      <h3>${material.title || 'Рекламное задание'}</h3>
+      <p class="material-description">${material.description || 'Разместите рекламу в своем контенте'}</p>
+      <div class="material-details">
+        <p><strong>Платформа:</strong> ${material.platform ? material.platform.charAt(0).toUpperCase() + material.platform.slice(1) : 'Любая'}</p>
+        <p><strong>Вознаграждение:</strong> ${material.reward || 0.1}₽ за 1к просмотров</p>
+        ${material.url ? `<p><a href="${material.url}" target="_blank" class="material-link"><i class="fas fa-external-link-alt"></i> Ссылка на материалы</a></p>` : ''}
+      </div>
+      <div class="material-actions">
+        ${isCompleted ? `
+          <button class="ios-button small completed-btn" disabled>
+            <i class="fas fa-check-circle"></i> Выполнено
+          </button>
+        ` : isPending ? `
+          <button class="ios-button small in-progress-btn" disabled>
+            <i class="fas fa-hourglass-half"></i> На рассмотрении
+          </button>
+        ` : isAccepted ? `
+          <button class="ios-button small in-progress-btn" disabled>
+            <i class="fas fa-hourglass-half"></i> В процессе
+          </button>
+        ` : `
+          <button class="ios-button small take-btn">
+            <span class="btn-text">Принять задание</span>
+            <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+          </button>
+        `}
+      </div>
+    </div>
     `;
   }).join('');
+
+  // Обработчики для кнопок "Принять задание"
+  document.querySelectorAll('.take-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const btnText = this.querySelector('.btn-text');
+      const btnLoader = this.querySelector('.btn-loader');
+      
+      btnText.classList.add('hidden');
+      btnLoader.classList.remove('hidden');
+      
+      const materialId = this.closest('.material-item').dataset.id;
+      const uid = auth.currentUser?.uid;
+      
+      if (uid) {
+        try {
+          await update(ref(db, `users/${uid}/materials`), {
+            [materialId]: {
+              accepted: new Date().toISOString(),
+              status: 'in_progress',
+              platform: materials[materialId].platform,
+              reward: materials[materialId].reward,
+              title: materials[materialId].title,
+              views: 0,
+              earnings: 0
+            }
+          });
+          showNotification('Задание успешно принято!');
+          displayMaterials(filterPlatform);
+        } catch (error) {
+          showNotification(`Ошибка: ${error.message}`, 'error');
+        } finally {
+          btnText.classList.remove('hidden');
+          btnLoader.classList.add('hidden');
+        }
+      }
+    });
+  });
+
+  // Обработчики для фильтров
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      displayMaterials(this.dataset.platform);
+    });
+  });
 }
 
-// Обработка входа
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+// Отображение статистики
+async function displayStats(uid) {
+  const statsContainer = document.getElementById('stats-container');
+  statsContainer.innerHTML = `
+    <div class="loading-placeholder">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Загрузка статистики...</p>
+    </div>
+  `;
+
+  const userData = await loadUserData(uid);
   
-  loginBtn.querySelector('.btn-text').classList.add('hidden');
-  loginBtn.querySelector('.btn-loader').classList.remove('hidden');
-  loginBtn.disabled = true;
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    // Проверка необходимости MFA
-    const mfaUser = multiFactor(user);
-    if (mfaUser.enrolledFactors.length > 0) {
-      showMfaModal('code');
-      const phoneFactor = mfaUser.enrolledFactors.find(factor => factor.factorId === 'phone');
-      if (phoneFactor) {
-        const phoneAuthProvider = new PhoneAuthProvider(auth);
-        verificationId = await phoneAuthProvider.verifyPhoneNumber({
-          multiFactorHint: phoneFactor,
-          session: mfaUser.getSession()
-        }, recaptchaVerifier);
-      }
-    } else {
-      showNotification('Вход успешен');
-    }
-  } catch (error) {
-    console.error('Ошибка входа:', error);
-    showNotification(error.message, 'error');
-  } finally {
-    loginBtn.querySelector('.btn-text').classList.remove('hidden');
-    loginBtn.querySelector('.btn-loader').classList.add('hidden');
-    loginBtn.disabled = false;
-  }
-});
-
-// Обработка кода MFA
-mfaCodeConfirm.addEventListener('click', async () => {
-  const code = mfaCodeInput.value;
-  if (!code) {
-    showNotification('Введите код из SMS', 'error');
+  if (!userData?.materials || Object.keys(userData.materials).length === 0) {
+    statsContainer.innerHTML = `
+      <div class="ios-card">
+        <p>У вас нет активных заданий</p>
+      </div>
+    `;
     return;
   }
 
-  try {
-    const credential = PhoneAuthProvider.credential(verificationId, code);
-    await multiFactor(auth.currentUser).enroll(credential);
-    showNotification('Двухфакторная аутентификация подтверждена');
-    hideMfaModal();
-  } catch (error) {
-    console.error('Ошибка MFA:', error);
-    showNotification('Неверный код SMS', 'error');
-  }
-});
+  // Рассчитываем общую статистику
+  const totalTasks = Object.keys(userData.materials).length;
+  const completedTasks = Object.values(userData.materials).filter(m => m.status === 'completed').length;
+  const pendingTasks = Object.values(userData.materials).filter(m => m.status === 'pending').length;
+  const inProgressTasks = Object.values(userData.materials).filter(m => m.status === 'in_progress').length;
+  const totalEarnings = Object.values(userData.materials).reduce((sum, m) => sum + (m.earnings || 0), 0);
 
-// Обработка настройки MFA
-mfaPhoneConfirm.addEventListener('click', async () => {
-  const phoneNumber = mfaPhoneInput.value;
-  if (!phoneNumber) {
-    showNotification('Введите номер телефона', 'error');
-    return;
-  }
-
-  try {
-    const phoneAuthProvider = new PhoneAuthProvider(auth);
-    verificationId = await phoneAuthProvider.verifyPhoneNumber({
-      phoneNumber,
-      session: multiFactor(auth.currentUser).getSession()
-    }, recaptchaVerifier);
-    showMfaModal('code');
-  } catch (error) {
-    console.error('Ошибка отправки SMS:', error);
-    showNotification('Ошибка отправки SMS', 'error');
-  }
-});
-
-// Отмена MFA
-mfaPhoneCancel.addEventListener('click', () => hideMfaModal());
-mfaCodeCancel.addEventListener('click', () => hideMfaModal());
-
-// Настройка кнопки MFA в профиле
-document.addEventListener('click', async (e) => {
-  if (e.target.id === 'mfa-btn') {
-    const user = auth.currentUser;
-    const mfaUser = multiFactor(user);
-    if (mfaUser.enrolledFactors.length > 0) {
-      showNotification('Двухфакторная аутентификация уже включена');
-    } else {
-      showMfaModal('phone');
-    }
-  }
-});
-
-// Обработка регистрации
-signupForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('signup-name').value;
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
-  
-  signupBtn.querySelector('.btn-text').classList.add('hidden');
-  signupBtn.querySelector('.btn-loader').classList.remove('hidden');
-  signupBtn.disabled = true;
-
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    
-    await updateProfile(user, { displayName: name });
-    await set(ref(db, `users/${user.uid}`), {
-      ...userDataTemplate,
-      name,
-      email
-    });
-    
-    await sendEmailVerification(user);
-    showNotification('Регистрация успешна! Подтвердите email.');
-  } catch (error) {
-    console.error('Ошибка регистрации:', error);
-    showNotification(error.message, 'error');
-  } finally {
-    signupBtn.querySelector('.btn-text').classList.remove('hidden');
-    signupBtn.querySelector('.btn-loader').classList.add('hidden');
-    signupBtn.disabled = false;
-  }
-});
-
-// Проверка состояния аутентификации
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    authScreen.classList.add('hidden');
-    appScreen.classList.remove('hidden');
-    dynamicContent.innerHTML = sections.main;
-    
-    const userData = await loadUserData(user.uid);
-    if (userData) {
-      document.getElementById('profile-name').textContent = userData.name || 'Пользователь';
-      document.getElementById('profile-balance').textContent = `${userData.balance} ₽`;
-      document.getElementById('name-input').value = userData.name || '';
-      
-      const emailVerifyContainer = document.getElementById('email-verify-container');
-      if (!user.emailVerified) {
-        emailVerifyContainer.innerHTML = `
-          <div class="email-verify">
-            <p>Подтвердите ваш email</p>
-            <button class="ios-button small" id="resend-email-verification">
-              Отправить письмо повторно
-            </button>
+  statsContainer.innerHTML = `
+    <div class="stats-summary">
+      <div class="stat-card">
+        <h3>Всего заданий</h3>
+        <p>${totalTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Выполнено</h3>
+        <p>${completedTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>В процессе</h3>
+        <p>${inProgressTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>На рассмотрении</h3>
+        <p>${pendingTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Заработано</h3>
+        <p>${totalEarnings.toFixed(2)}₽</p>
+      </div>
+    </div>
+    <div class="tasks-list">
+      <h3>Ваши задания</h3>
+      ${Object.entries(userData.materials).map(([id, task]) => `
+        <div class="task-item">
+          <div class="task-info">
+            <h4>${task.title}</h4>
+            <p>Принято: ${new Date(task.accepted).toLocaleDateString()}</p>
+            <p>Просмотров: ${task.views || 0}</p>
+            <p>Заработано: ${task.earnings || 0}₽</p>
           </div>
-        `;
+          <div class="task-status">
+            ${task.status === 'completed' ? `
+              <span class="status-badge completed"><i class="fas fa-check-circle"></i> Выполнено</span>
+            ` : task.status === 'pending' ? `
+              <span class="status-badge pending"><i class="fas fa-clock"></i> На рассмотрении</span>
+            ` : `
+              <button class="ios-button small complete-btn" data-id="${id}">
+                <span class="btn-text">Подтвердить выполнение</span>
+                <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+              </button>
+            `}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Обработчики для кнопок подтверждения выполнения
+  document.querySelectorAll('.complete-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const btnText = this.querySelector('.btn-text');
+      const btnLoader = this.querySelector('.btn-loader');
+      const taskId = this.dataset.id;
+      
+      btnText.classList.add('hidden');
+      btnLoader.classList.remove('hidden');
+      
+      try {
+        // Обновляем статус задания на "на рассмотрении"
+        await update(ref(db, `users/${uid}`), {
+          [`materials/${taskId}/status`]: 'pending'
+        });
+        
+        showNotification("Задание отправлено на проверку. Ожидайте подтверждения.");
+        displayStats(uid);
+      } catch (error) {
+        showNotification(`Ошибка: ${error.message}`, 'error');
+      } finally {
+        btnText.classList.remove('hidden');
+        btnLoader.classList.add('hidden');
       }
-    }
-    
-    displayMaterials();
-  } else {
-    authScreen.classList.remove('hidden');
-    appScreen.classList.add('hidden');
-    initRecaptcha();
-  }
-});
-
-// Обработка переключения вкладок
-tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    const section = button.dataset.section;
-    dynamicContent.innerHTML = sections[section];
-    if (section === 'materials') {
-      displayMaterials();
-    }
+    });
   });
-});
+}
 
-// Обработка выхода
-document.getElementById('logout-btn-top').addEventListener('click', showLogoutModal);
-
-// Обработка смены пароля
-document.getElementById('change-password-btn').addEventListener('click', () => {
-  const modal = document.getElementById('change-password-modal');
-  modal.classList.remove('hidden');
+// Загрузка раздела
+async function loadSection(sectionId, uid) {
+  dynamicContent.innerHTML = sections[sectionId];
   
-  document.getElementById('password-cancel').addEventListener('click', () => {
-    modal.classList.add('hidden');
-  }, { once: true });
+  // Обновляем активную кнопку
+  tabButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === sectionId);
+  });
   
-  document.getElementById('password-confirm').addEventListener('click', async () => {
-    const currentPassword = document.getElementById('current-password').value;
-    const newPassword = document.getElementById('new-password').value;
-    
-    if (!currentPassword || !newPassword) {
-      showNotification('Заполните все поля', 'error');
-      return;
+  // Загружаем специфичные данные
+  if (sectionId === 'materials') {
+    displayMaterials();
+  } else if (sectionId === 'stats' && uid) {
+    displayStats(uid);
+  } else if (sectionId === 'profile' && uid) {
+    const userData = await loadUserData(uid);
+    if (userData) {
+      document.getElementById('profile-name').textContent = userData.name;
+      document.getElementById('profile-balance').textContent = `${userData.balance || 0} ₽`;
+      document.getElementById('profile-tiktok').textContent = userData.tiktok || "Не указан";
+      document.getElementById('profile-youtube').textContent = userData.youtube || "Не указан";
+      document.getElementById('tiktok-input').value = userData.tiktok || "";
+      document.getElementById('youtube-input').value = userData.youtube || "";
+      
+      // Обработчики для сохранения соцсетей
+      document.getElementById('save-tiktok').addEventListener('click', async () => {
+        const btn = document.getElementById('save-tiktok');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+        
+        const tiktok = document.getElementById('tiktok-input').value.trim();
+        if (tiktok) {
+          try {
+            await saveUserData(uid, { tiktok });
+            document.getElementById('profile-tiktok').textContent = tiktok;
+            showNotification("TikTok успешно сохранен");
+          } catch (error) {
+            showNotification(`Ошибка: ${error.message}`, 'error');
+          } finally {
+            btnText.classList.remove('hidden');
+            btnLoader.classList.add('hidden');
+          }
+        }
+      });
+      
+      document.getElementById('save-youtube').addEventListener('click', async () => {
+        const btn = document.getElementById('save-youtube');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+        
+        const youtube = document.getElementById('youtube-input').value.trim();
+        if (youtube) {
+          try {
+            await saveUserData(uid, { youtube });
+            document.getElementById('profile-youtube').textContent = youtube;
+            showNotification("YouTube успешно сохранен");
+          } catch (error) {
+            showNotification(`Ошибка: ${error.message}`, 'error');
+          } finally {
+            btnText.classList.remove('hidden');
+            btnLoader.classList.add('hidden');
+          }
+        }
+      });
     }
+    
+    // Обработчик для кнопки выхода
+    document.getElementById('logout-btn-top').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        authScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+        showNotification("Вы успешно вышли из системы");
+      } catch (error) {
+        showNotification(`Ошибка выхода: ${error.message}`, 'error');
+      }
+    });
+  }
+}
+
+// Инициализация приложения
+function initApp() {
+  // Обработчики для переключения между вкладками авторизации
+  document.getElementById('login-tab').addEventListener('click', () => {
+    document.getElementById('login-tab').classList.add('active');
+    document.getElementById('signup-tab').classList.remove('active');
+    document.getElementById('login-form').classList.remove('hidden');
+    document.getElementById('signup-form').classList.add('hidden');
+  });
+  
+  document.getElementById('signup-tab').addEventListener('click', () => {
+    document.getElementById('signup-tab').classList.add('active');
+    document.getElementById('login-tab').classList.remove('active');
+    document.getElementById('signup-form').classList.remove('hidden');
+    document.getElementById('login-form').classList.add('hidden');
+  });
+  
+  // Обработчик формы входа
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
     
     try {
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, newPassword);
-      showNotification('Пароль успешно изменен');
-      modal.classList.add('hidden');
+      await signInWithEmailAndPassword(auth, email, password);
+      showNotification("Вход выполнен успешно");
     } catch (error) {
-      console.error('Ошибка смены пароля:', error);
-      showNotification('Ошибка смены пароля', 'error');
+      showNotification(`Ошибка входа: ${error.message}`, 'error');
     }
-  }, { once: true });
-});
+  });
+  
+  // Обработчик формы регистрации
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Сохраняем дополнительные данные пользователя
+      const userData = {
+        ...userDataTemplate,
+        name,
+        email
+      };
+      
+      await set(ref(db, `users/${user.uid}`), userData);
+      showNotification("Регистрация прошла успешно");
+    } catch (error) {
+      showNotification(`Ошибка регистрации: ${error.message}`, 'error');
+    }
+  });
+  
+  // Обработчики для кнопок навигации
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sectionId = btn.dataset.section;
+      const uid = auth.currentUser?.uid;
+      loadSection(sectionId, uid);
+    });
+  });
+  
+  // Отслеживание состояния аутентификации
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      authScreen.classList.add('hidden');
+      appScreen.classList.remove('hidden');
+      loadSection('main', user.uid);
+    } else {
+      authScreen.classList.remove('hidden');
+      appScreen.classList.add('hidden');
+    }
+  });
+}
+
+// Запуск приложения
+document.addEventListener('DOMContentLoaded', initApp);
