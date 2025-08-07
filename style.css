@@ -1,31 +1,73 @@
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   background-color: #0f0f1a;
   color: #fff;
 }
 
 header {
   background-color: #6a0dad;
-  color: white;
   text-align: center;
   padding: 2rem 1rem;
 }
 
-.register-btn {
-  background-color: #a855f7;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 10px;
+header h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+header p {
+  margin: 0.5rem 0 1.5rem;
   font-size: 1rem;
-  margin-top: 1rem;
+  color: #e0e0e0;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn, .btn-outline {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: none;
   cursor: pointer;
 }
 
+.btn {
+  background-color: #a855f7;
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #a855f7;
+  color: #a855f7;
+}
+
 main {
-  padding: 2rem 1rem;
-  text-align: center;
+  padding: 2rem 1rem 4rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+section h2 {
+  color: #a855f7;
+  margin-bottom: 0.5rem;
+}
+
+section ul {
+  list-style: none;
+  padding: 0;
+}
+
+section li {
+  margin: 0.5rem 0;
 }
 
 .bottom-nav {
@@ -33,21 +75,26 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #1c1c2b;
+  background-color: #1a1a2e;
   display: flex;
   justify-content: space-around;
-  padding: 0.7rem 0;
+  padding: 0.6rem 0;
   border-top: 1px solid #333;
 }
 
 .nav-item {
   flex: 1;
   text-align: center;
-  color: #ccc;
-  font-size: 1.8rem;
-  cursor: pointer;
 }
 
-.nav-item.active {
-  color: #a855f7;
+.nav-item img {
+  width: 28px;
+  opacity: 0.6;
+  transition: 0.3s ease;
+}
+
+.nav-item.active img,
+.nav-item:hover img {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px #a855f7);
 }
