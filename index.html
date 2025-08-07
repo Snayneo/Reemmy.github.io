@@ -4,128 +4,59 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reemmy</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
-    .auth-popup {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .auth-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      position: relative;
-      width: 300px;
-    }
-    .auth-card input {
-      display: block;
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-    }
-    .btn {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      padding: 0.7rem;
-      cursor: pointer;
-      width: 100%;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #4f46e5;
-      color: #4f46e5;
-      padding: 0.7rem;
-      cursor: pointer;
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #111827;
-      display: flex;
-      justify-content: space-around;
-      padding: 1rem 0;
-    }
-    .nav-item img {
-      width: 30px;
-      height: 30px;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .auth { max-width: 400px; margin: auto; }
+    input, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Reemmy</h1>
-    <p>Платформа для заработка на коротких видео</p>
-    <div class="btn-group">
-      <button class="btn" onclick="showAuthForm(true)">Зарегистрироваться</button>
-      <button class="btn-outline" onclick="showAuthForm(false)">Войти</button>
-    </div>
-  </header>
+  <div class="auth">
+    <h2 id="formTitle">Регистрация</h2>
 
-  <main>
-    <section class="who">
-      <h2>Кто мы?</h2>
-      <p>Reemmy — независимая партнёрская платформа, которая помогает авторам зарабатывать на видео даже с 1 000 подписчиков. Мы не связаны с TikTok или другими соцсетями.</p>
-    </section>
-  </main>
+    <input type="text" id="name" placeholder="Имя" />
+    <input type="text" id="telegram" placeholder="Telegram" />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Пароль" />
 
-  <div class="auth-popup" id="authForm">
-    <div class="auth-card">
-      <h3 id="formTitle">Авторизация</h3>
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Пароль" />
-      <button class="btn" onclick="handleAuth()">Продолжить</button>
-      <p class="small" id="toggleText">
-        Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>
-      </p>
-      <button class="close-btn" onclick="hideAuthForm()">✕</button>
-    </div>
+    <button onclick="handleAuth()">Продолжить</button>
+    <p id="switchText">Уже есть аккаунт? <a href="#" onclick="toggleForm()">Войти</a></p>
   </div>
 
-  <nav class="bottom-nav">
-    <div class="nav-item active"><img src="https://img.icons8.com/ios-filled/50/ffffff/home-page.png" alt="Главная" /></div>
-    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/combo-chart--v1.png" alt="Статистика" /></div>
-    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/user-menu-female.png" alt="Профиль" onclick="showAuthForm(false)" /></div>
-  </nav>
-
-  <!-- Firebase SDK -->
   <script type="module">
-    import { auth, registerUser, loginUser } from './firebase.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    let isRegistering = false;
-
-    window.showAuthForm = (registering) => {
-      isRegistering = registering;
-      document.getElementById("formTitle").innerText = registering ? "Регистрация" : "Авторизация";
-      document.getElementById("toggleText").innerHTML = registering
-        ? `Уже есть аккаунт? <a href="#" onclick="toggleForm()">Войти</a>`
-        : `Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>`;
-      document.getElementById("authForm").style.display = "flex";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCAsvKNtfZqN7wlvDMV_sI8Hn-6cYoGr4",
+      authDomain: "reemmy-fdnbf276454rfgh-1.firebaseapp.com",
+      databaseURL: "https://reemmy-fdnbf276454rfgh-1-default-rtdb.firebaseio.com",
+      projectId: "reemmy-fdnbf276454rfgh-1",
+      storageBucket: "reemmy-fdnbf276454rfgh-1.appspot.com",
+      messagingSenderId: "1013780844206",
+      appId: "1:1013780844206:web:7fc8af82eecf80ee04673f"
     };
 
-    window.hideAuthForm = () => {
-      document.getElementById("authForm").style.display = "none";
-    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let isRegistering = true;
 
     window.toggleForm = () => {
-      showAuthForm(!isRegistering);
+      isRegistering = !isRegistering;
+      document.getElementById("formTitle").innerText = isRegistering ? "Регистрация" : "Вход";
+      document.getElementById("switchText").innerHTML = isRegistering
+        ? `Уже есть аккаунт? <a href="#" onclick="toggleForm()">Войти</a>`
+        : `Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>`;
+
+      // Скрыть/показать поля
+      document.getElementById("name").style.display = isRegistering ? "block" : "none";
+      document.getElementById("telegram").style.display = isRegistering ? "block" : "none";
     };
+
+    toggleForm(); // инициализация вида формы
 
     window.handleAuth = async () => {
       const email = document.getElementById("email").value;
@@ -133,15 +64,26 @@
 
       try {
         if (isRegistering) {
-          await registerUser(email, password);
-          alert("Успешная регистрация!");
+          const name = document.getElementById("name").value;
+          const telegram = document.getElementById("telegram").value;
+
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCredential.user.uid;
+
+          // Записываем в базу
+          await set(ref(db, 'users/' + uid), {
+            email: email,
+            name: name,
+            telegram: telegram
+          });
+
+          alert("✅ Регистрация успешна!");
         } else {
-          await loginUser(email, password);
-          alert("Вход выполнен!");
+          await signInWithEmailAndPassword(auth, email, password);
+          alert("✅ Вход выполнен!");
         }
-        hideAuthForm();
       } catch (error) {
-        alert("Ошибка: " + error.message);
+        alert("❌ Ошибка: " + error.message);
       }
     };
   </script>
