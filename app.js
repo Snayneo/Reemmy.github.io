@@ -1,42 +1,60 @@
 import { 
   auth, 
-  db, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut,
-  collection,
-  addDoc,
-  onSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc
+  signOut
 } from './firebase.js';
 
 // DOM элементы
-const authContainer = document.getElementById('auth-container');
-const appContainer = document.getElementById('app-container');
+const authScreen = document.getElementById('auth-screen');
+const mainScreen = document.getElementById('main-screen');
+const profileScreen = document.getElementById('profile-screen');
 const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
-const logoutBtn = document.getElementById('logout-btn');
 const authForm = document.getElementById('auth-form');
-const addForm = document.getElementById('add-form');
-const itemsList = document.getElementById('items-list');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
-const itemInput = document.getElementById('item-input');
+const profileEmail = document.getElementById('profile-email');
+const logoutBtns = document.querySelectorAll('#logout-nav-btn, #logout-nav-btn-2');
+const navBtns = document.querySelectorAll('.nav-btn');
+
+// Переключение между экранами
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.add('hidden');
+  });
+  document.getElementById(screenId).classList.remove('hidden');
+  
+  // Обновление активных кнопок навигации
+  navBtns.forEach(btn => {
+    if (btn.dataset.screen === screenId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+// Обработчики навигации
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.screen) {
+      showScreen(btn.dataset.screen);
+    }
+  });
+});
 
 // Проверка состояния аутентификации
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // Пользователь вошел в систему
-    authContainer.classList.add('hidden');
-    appContainer.classList.remove('hidden');
-    loadItems(user.uid);
+    authScreen.classList.add('hidden');
+    showScreen('main-screen');
+    profileEmail.textContent = user.email;
   } else {
     // Пользователь вышел из системы
-    authContainer.classList.remove('hidden');
-    appContainer.classList.add('hidden');
+    showScreen('auth-screen');
   }
 });
 
@@ -61,78 +79,24 @@ signupBtn.addEventListener('click', async (e) => {
   
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    alert('Регистрация прошла успешно!');
   } catch (error) {
     alert(error.message);
   }
 });
 
 // Выход
-logoutBtn.addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    alert(error.message);
-  }
-});
-
-// Добавление элемента
-addForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const text = itemInput.value;
-  const user = auth.currentUser;
-  
-  if (text && user) {
+logoutBtns.forEach(btn => {
+  btn.addEventListener('click', async () => {
     try {
-      await addDoc(collection(db, 'users', user.uid, 'items'), {
-        text: text,
-        completed: false,
-        createdAt: new Date()
-      });
-      itemInput.value = '';
+      await signOut(auth);
     } catch (error) {
       alert(error.message);
     }
-  }
+  });
 });
 
-// Загрузка и отображение элементов
-function loadItems(userId) {
-  onSnapshot(collection(db, 'users', userId, 'items'), (snapshot) => {
-    itemsList.innerHTML = '';
-    
-    snapshot.forEach((doc) => {
-      const item = doc.data();
-      const li = document.createElement('li');
-      
-      li.innerHTML = `
-        <span>${item.text}</span>
-        <div>
-          <button class="complete-btn" data-id="${doc.id}">✓</button>
-          <button class="delete-btn" data-id="${doc.id}">×</button>
-        </div>
-      `;
-      
-      if (item.completed) {
-        li.querySelector('span').style.textDecoration = 'line-through';
-      }
-      
-      itemsList.appendChild(li);
-    });
-    
-    // Обработчики для кнопок
-    document.querySelectorAll('.complete-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        const itemRef = doc(db, 'users', userId, 'items', id);
-        await updateDoc(itemRef, { completed: true });
-      });
-    });
-    
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        await deleteDoc(doc(db, 'users', userId, 'items', id));
-      });
-    });
-  });
-}
+// Переход в профиль при клике на карточку
+document.getElementById('profile-card').addEventListener('click', () => {
+  showScreen('profile-screen');
+});
