@@ -629,3 +629,49 @@ body {
     padding: 5px;
   }
 }
+/* Добавьте эти стили в конец файла */
+
+/* Кнопка показа пароля */
+.show-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #8e8e93;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* Футер формы авторизации */
+.auth-footer {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.auth-footer a {
+  color: #007aff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Адаптивные стили */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 20px 15px;
+    margin: 0 15px;
+  }
+  
+  .logo-text {
+    font-size: 28px;
+  }
+  
+  .ios-card {
+    padding: 12px;
+  }
+}
