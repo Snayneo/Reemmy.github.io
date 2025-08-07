@@ -33,6 +33,7 @@
           <i class="fas fa-lock"></i>
           <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
+        <div id="recaptcha-container" style="margin-top: 10px;"></div> <!-- Контейнер для reCAPTCHA -->
         <button type="submit" class="ios-button" id="login-btn">
           <span class="btn-text">Войти</span>
           <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
@@ -51,10 +52,6 @@
         <div class="input-group">
           <i class="fas fa-lock"></i>
           <input type="password" id="signup-password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
-        </div>
-        <div class="input-group">
-          <i class="fas fa-phone"></i>
-          <input type="tel" id="signup-phone" placeholder="Телефон (+7...)">
         </div>
         <button type="submit" class="ios-button" id="signup-btn">
           <span class="btn-text">Зарегистрироваться</span>
@@ -121,43 +118,45 @@
     </div>
   </div>
 
-  <!-- MFA Verification Modal -->
+  <div id="rejection-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Причина отклонения</h3>
+      <textarea id="rejection-reason" placeholder="Укажите причину отклонения задания..." rows="3"></textarea>
+      <div class="modal-actions">
+        <button id="rejection-cancel" class="ios-button small">Отмена</button>
+        <button id="rejection-confirm" class="ios-button small danger">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно для SMS MFA -->
   <div id="mfa-modal" class="modal hidden">
     <div class="modal-content">
-      <h3>Подтверждение по SMS</h3>
-      <p>Мы отправили SMS с кодом подтверждения на ваш номер телефона</p>
-      <div class="input-group">
-        <i class="fas fa-mobile-alt"></i>
-        <input type="text" id="mfa-code" placeholder="Введите код из SMS" maxlength="6">
+      <h3>Двухфакторная аутентификация</h3>
+      <div id="mfa-phone-step" class="mfa-step">
+        <div class="input-group">
+          <i class="fas fa-phone"></i>
+          <input type="tel" id="mfa-phone" placeholder="Номер телефона (+79991234567)" required>
+        </div>
+        <div id="recaptcha-container-mfa" style="margin-top: 10px;"></div>
+        <div class="modal-actions">
+          <button id="mfa-phone-cancel" class="ios-button small">Отмена</button>
+          <button id="mfa-phone-confirm" class="ios-button small">Отправить код</button>
+        </div>
       </div>
-      <div id="recaptcha-container"></div>
-      <div class="modal-actions">
-        <button id="mfa-cancel" class="ios-button small">Отмена</button>
-        <button id="mfa-confirm" class="ios-button small">Подтвердить</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Phone Number Modal -->
-  <div id="phone-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Добавить номер телефона</h3>
-      <p>Для включения двухфакторной аутентификации укажите номер телефона</p>
-      <div class="input-group">
-        <i class="fas fa-phone"></i>
-        <input type="tel" id="phone-number" placeholder="+7 (XXX) XXX-XX-XX">
-      </div>
-      <div id="phone-recaptcha-container"></div>
-      <div class="modal-actions">
-        <button id="phone-cancel" class="ios-button small">Отмена</button>
-        <button id="phone-confirm" class="ios-button small">Сохранить</button>
+      <div id="mfa-code-step" class="mfa-step hidden">
+        <div class="input-group">
+          <i class="fas fa-sms"></i>
+          <input type="text" id="mfa-code" placeholder="Код из SMS" required>
+        </div>
+        <div class="modal-actions">
+          <button id="mfa-code-cancel" class="ios-button small">Отмена</button>
+          <button id="mfa-code-confirm" class="ios-button small">Подтвердить</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
   <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
