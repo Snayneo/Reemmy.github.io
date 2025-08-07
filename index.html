@@ -3,42 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мое Firebase Приложение</title>
+  <title>Reemmy App</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js" defer></script>
 </head>
 <body>
-  <div class="container">
-    <!-- Авторизация -->
-    <div id="auth-container" class="auth-container">
-      <h2>Вход / Регистрация</h2>
+  <!-- Экран авторизации -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-container">
+      <h1>Reemmy</h1>
       <form id="auth-form">
         <input type="email" id="email" placeholder="Email" required>
         <input type="password" id="password" placeholder="Пароль" required>
         <button type="submit" id="login-btn">Войти</button>
-        <button type="button" id="signup-btn">Зарегистрироваться</button>
+        <button type="button" id="signup-btn">Регистрация</button>
       </form>
     </div>
+  </div>
 
-    <!-- Основное приложение (показывается после входа) -->
-    <div id="app-container" class="app-container hidden">
-      <header>
-        <h1>Добро пожаловать!</h1>
-        <button id="logout-btn">Выйти</button>
-      </header>
-      
-      <div class="content">
-        <!-- Форма добавления данных -->
-        <form id="add-form">
-          <input type="text" id="item-input" placeholder="Добавить элемент" required>
-          <button type="submit">Добавить</button>
-        </form>
-        
-        <!-- Список элементов -->
-        <ul id="items-list"></ul>
+  <!-- Главное меню (после авторизации) -->
+  <div id="main-screen" class="screen hidden">
+    <header>
+      <h1>Главное меню</h1>
+    </header>
+    
+    <main class="content">
+      <div class="card" id="profile-card">
+        <i class="fas fa-user"></i>
+        <h3>Профиль</h3>
       </div>
-    </div>
+      <div class="card">
+        <i class="fas fa-calendar"></i>
+        <h3>Календарь</h3>
+      </div>
+      <div class="card">
+        <i class="fas fa-tasks"></i>
+        <h3>Задачи</h3>
+      </div>
+      <div class="card">
+        <i class="fas fa-cog"></i>
+        <h3>Настройки</h3>
+      </div>
+    </main>
+    
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="main"><i class="fas fa-home"></i></button>
+      <button class="nav-btn" data-screen="tasks"><i class="fas fa-list"></i></button>
+      <button class="nav-btn" data-screen="profile"><i class="fas fa-user"></i></button>
+      <button class="nav-btn" id="logout-nav-btn"><i class="fas fa-sign-out-alt"></i></button>
+    </nav>
+  </div>
+
+  <!-- Экран профиля -->
+  <div id="profile-screen" class="screen hidden">
+    <header>
+      <h1>Мой профиль</h1>
+    </header>
+    
+    <main class="content">
+      <div class="profile-info">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <h2 id="profile-email">Загрузка...</h2>
+        <button id="change-password-btn">Сменить пароль</button>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <button class="nav-btn" data-screen="main"><i class="fas fa-home"></i></button>
+      <button class="nav-btn" data-screen="tasks"><i class="fas fa-list"></i></button>
+      <button class="nav-btn active" data-screen="profile"><i class="fas fa-user"></i></button>
+      <button class="nav-btn" id="logout-nav-btn-2"><i class="fas fa-sign-out-alt"></i></button>
+    </nav>
   </div>
 </body>
 </html>
