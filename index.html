@@ -1,149 +1,273 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reemmy</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .auth-popup {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .auth-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      position: relative;
-      width: 300px;
-    }
-    .auth-card input {
-      display: block;
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-    }
-    .btn {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      padding: 0.7rem;
-      cursor: pointer;
-      width: 100%;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #4f46e5;
-      color: #4f46e5;
-      padding: 0.7rem;
-      cursor: pointer;
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #111827;
-      display: flex;
-      justify-content: space-around;
-      padding: 1rem 0;
-    }
-    .nav-item img {
-      width: 30px;
-      height: 30px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="style.css">
+    <title>Texturra Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 </head>
 <body>
-  <header>
-    <h1>Reemmy</h1>
-    <p>Платформа для заработка на коротких видео</p>
-    <div class="btn-group">
-      <button class="btn" onclick="showAuthForm(true)">Зарегистрироваться</button>
-      <button class="btn-outline" onclick="showAuthForm(false)">Войти</button>
+    <div class="relative flex size-full min-h-screen flex-col bg-[#221122] dark justify-between group/design-root overflow-x-hidden" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
+        <div>
+            <div class="flex items-center bg-[#221122] p-4 pb-2 justify-between">
+                <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12">Dashboard</h2>
+                <div class="flex w-12 items-center justify-end">
+                    <button id="settingsBtn" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+                        <div class="text-white" data-icon="Gear" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="flex gap-4 p-4 bg-[#221122]">
+                <button id="homeTab" class="tab-button flex-1 text-white text-base font-bold leading-normal tracking-[0.015em] p-2 rounded-lg bg-[#482348] active">Home</button>
+                <button id="chatsTab" class="tab-button flex-1 text-white text-base font-bold leading-normal tracking-[0.015em] p-2 rounded-lg bg-[#482348]">Chats</button>
+                <button id="collaborationTab" class="tab-button flex-1 text-white text-base font-bold leading-normal tracking-[0.015em] p-2 rounded-lg bg-[#482348]">Collaboration</button>
+                <button id="profileTab" class="tab-button flex-1 text-white text-base font-bold leading-normal tracking-[0.015em] p-2 rounded-lg bg-[#482348]">Profile</button>
+            </div>
+            <div id="homeContent" class="tab-content">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Connected accounts</h3>
+                <div class="flex items-center gap-4 bg-[#221122] px-4 min-h-14 justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="text-white flex items-center justify-center rounded-lg bg-[#482348] shrink-0 size-10" data-icon="YoutubeLogo" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M164.44,121.34l-48-32A8,8,0,0,0,104,96v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,145.05V111l25.58,17ZM234.33,69.52a24,24,0,0,0-14.49-16.4C185.56,39.88,131,40,128,40s-57.56-.12-91.84,13.12a24,24,0,0,0-14.49,16.4C19.08,79.5,16,97.74,16,128s3.08,48.5,5.67,58.48a24,24,0,0,0,14.49,16.41C69,215.56,120.4,216,127.34,216h1.32c6.94,0,58.37-.44,91.18-13.11a24,24,0,0,0,14.49-16.41c2.59-10,5.67-28.22,5.67-58.48S236.92,79.5,234.33,69.52Zm-15.49,113a8,8,0,0,1-4.77,5.49c-31.65,12.22-85.48,12-86,12H128c-.54,0-54.33.2-86-12a8,8,0,0,1-4.77-5.49C34.8,173.39,32,156.57,32,128s2.8-45.39,5.16-54.47A8,8,0,0,1,41.93,68c30.52-11.79,81.66-12,85.85-12h.27c.54,0,54.38-.18,86,12a8,8,0,0,1,4.77,5.49C221.2,82.61,224,99.43,224,128S221.2,173.39,218.84,182.47Z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">YouTube</p>
+                    </div>
+                    <div class="shrink-0">
+                        <div class="text-white flex size-7 items-center justify-center" data-icon="Check" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-[#221122] px-4 min-h-14 justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="text-white flex items-center justify-center rounded-lg bg-[#482348] shrink-0 size-10" data-icon="TiktokLogo" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M224,72a48.05,48.05,0,0,1-48-48,8,8,0,0,0-8-8H128a8,8,0,0,0-8,8V156a20,20,0,1,1-28.57-18.08A8,8,0,0,0,96,130.69V88a8,8,0,0,0-9.4-7.88C50.91,86.48,24,119.1,24,156a76,76,0,0,0,152,0V116.29A103.25,103.25,0,0,0,224,128a8,8,0,0,0,8-8V80A8,8,0,0,0,224,72Zm-8,39.64a87.19,87.19,0,0,1-43.33-16.15A8,8,0,0,0,160,102v54a60,60,0,0,1-120,0c0-25.9,16.64-49.13,40-57.6v27.67A36,36,0,1,0,136,156V32h24.5A64.14,64.14,0,0,0,216,87.5Z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">TikTok</p>
+                    </div>
+                    <div class="shrink-0">
+                        <div class="text-white flex size-7 items-center justify-center" data-icon="Check" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">View statistics</h3>
+                <div class="flex flex-wrap gap-4 p-4">
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#673267]">
+                        <p class="text-white text-base font-medium leading-normal">Views</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">12,345</p>
+                    </div>
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#673267]">
+                        <p class="text-white text-base font-medium leading-normal">Likes</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">678</p>
+                    </div>
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#673267]">
+                        <p class="text-white text-base font-medium leading-normal">Comments</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">90</p>
+                    </div>
+                </div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Balance and income</h3>
+                <div class="flex flex-wrap gap-4 p-4">
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">Balance</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">$500</p>
+                    </div>
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">Income</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">$1,200</p>
+                    </div>
+                </div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Available promotional materials</h3>
+                <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");'></div>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1557682250-33bd709cbe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");'></div>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");'></div>
+                    </div>
+                </div>
+                <div class="flex justify-stretch">
+                    <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-between">
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ee2bee] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Download materials</span>
+                        </button>
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#482348] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Send report</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex px-4 py-3">
+                    <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-[#ee2bee] text-white text-base font-bold leading-normal tracking-[0.015em]">
+                        <span class="truncate">Withdraw money</span>
+                    </button>
+                </div>
+            </div>
+            <div id="chatsContent" class="tab-content hidden">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Chats</h3>
+                <div class="flex flex-col gap-4 p-4">
+                    <div class="flex items-center gap-4 bg-[#482348] px-4 py-3 rounded-xl">
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Chat with Support</p>
+                        <div class="text-white flex size-7 items-center justify-center" data-icon="Chat" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.26-3.78l.52-.44L84.56,200H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,136H80a8,8,0,0,0-5.23,1.95L40,216.22V64H216ZM88,112a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,112Zm0,32a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,144Z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-[#482348] px-4 py-3 rounded-xl">
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Creator Group</p>
+                        <div class="text-white flex size-7 items-center justify-center" data-icon="Chat" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.26-3.78l.52-.44L84.56,200H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,136H80a8,8,0,0,0-5.23,1.95L40,216.22V64H216ZM88,112a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,112Zm0,32a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,144Z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="collaborationContent" class="tab-content hidden">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Collaboration Opportunities</h3>
+                <div class="flex flex-col gap-4 p-4">
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">Brand Partnership</p>
+                        <p class="text-white text-sm font-normal leading-normal">Collaborate with Brand X for a sponsored video series.</p>
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ee2bee] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Apply</span>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">Creator Collab</p>
+                        <p class="text-white text-sm font-normal leading-normal">Join a group project with other creators.</p>
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ee2bee] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Join</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="profileContent" class="tab-content hidden">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Profile</h3>
+                <div class="flex flex-col gap-4 p-4">
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">User Information</p>
+                        <p class="text-white text-sm font-normal leading-normal">Email: <span id="userEmail">user@example.com</span></p>
+                        <p class="text-white text-sm font-normal leading-normal">Username: <span id="userName">User</span></p>
+                        <p class="text-white text-sm font-normal leading-normal">Joined: <span id="userJoined">January 2025</span></p>
+                    </div>
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-[#482348]">
+                        <p class="text-white text-base font-medium leading-normal">Balance</p>
+                        <p class="text-white tracking-light text-2xl font-bold leading-tight">$500</p>
+                        <button id="withdrawBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ee2bee] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Withdraw</span>
+                        </button>
+                    </div>
+                    <button id="signOutBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-[#482348] text-white text-base font-bold leading-normal tracking-[0.015em]">
+                        <span class="truncate">Sign Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="flex gap-2 border-t border-[#482348] bg-[#331933] px-4 pb-3 pt-2">
+                <a class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-white" href="#">
+                    <div class="text-white flex h-8 items-center justify-center" data-icon="House" data-size="24px" data-weight="fill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-white text-xs font-medium leading-normal tracking-[0.015em]">Home</p>
+                </a>
+                <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#c992c9]" href="#">
+                    <div class="text-[#c992c9] flex h-8 items-center justify-center" data-icon="Chat" data-size="24px" data-weight="regular">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.26-3.78l.52-.44L84.56,200H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,136H80a8,8,0,0,0-5.23,1.95L40,216.22V64H216ZM88,112a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,112Zm0,32a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,144Z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-[#c992c9] text-xs font-medium leading-normal tracking-[0.015em]">Chats</p>
+                </a>
+                <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#c992c9]" href="#">
+                    <div class="text-[#c992c9] flex h-8 items-center justify-center" data-icon="Users" data-size="24px" data-weight="regular">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.9a8,8,0,0,0,8.94,8.94H115.53a8,8,0,0,0,8.94-8.94A95.83,95.83,0,0,0,117.25,157.92ZM48,128a44,44,0,1,1,44,44A44.05,44.05,0,0,1,48,128ZM108.22,192H19.78a79.87,79.87,0,0,1,88.44-64A60.07,60.07,0,0,0,108.22,192Zm140.69,3.9a95.83,95.83,0,0,0-47.22-37.98,60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,87.78,195.9a8,8,0,0,0,8.94,8.94H199.53a8,8,0,0,0,8.94-8.94ZM164,128a44,44,0,1,1,44,44A44.05,44.05,0,0,1,164,128Zm83.78,64H159.34a79.87,79.87,0,0,1,88.44-64A60.07,60.07,0,0,0,247.78,192Z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-[#c992c9] text-xs font-medium leading-normal tracking-[0.015em]">Collaboration</p>
+                </a>
+                <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#c992c9]" href="#">
+                    <div class="text-[#c992c9] flex h-8 items-center justify-center" data-icon="User" data-size="24px" data-weight="regular">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-[#c992c9] text-xs font-medium leading-normal tracking-[0.015em]">Profile</p>
+                </a>
+            </div>
+            <div class="h-5 bg-[#331933]"></div>
+        </div>
     </div>
-  </header>
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from './firebase.js';
 
-  <main>
-    <section class="who">
-      <h2>Кто мы?</h2>
-      <p>Reemmy — независимая партнёрская платформа, которая помогает авторам зарабатывать на видео даже с 1 000 подписчиков. Мы не связаны с TikTok или другими соцсетями.</p>
-    </section>
-  </main>
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
 
-  <div class="auth-popup" id="authForm">
-    <div class="auth-card">
-      <h3 id="formTitle">Авторизация</h3>
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Пароль" />
-      <button class="btn" onclick="handleAuth()">Продолжить</button>
-      <p class="small" id="toggleText">
-        Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>
-      </p>
-      <button class="close-btn" onclick="hideAuthForm()">✕</button>
-    </div>
-  </div>
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.add('hidden'));
+                tab.classList.add('active');
+                document.getElementById(`${tab.id.replace('Tab', 'Content')}`).classList.remove('hidden');
+            });
+        });
 
-  <nav class="bottom-nav">
-    <div class="nav-item active"><img src="https://img.icons8.com/ios-filled/50/ffffff/home-page.png" alt="Главная" /></div>
-    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/combo-chart--v1.png" alt="Статистика" /></div>
-    <div class="nav-item"><img src="https://img.icons8.com/ios-filled/50/ffffff/user-menu-female.png" alt="Профиль" onclick="showAuthForm(false)" /></div>
-  </nav>
+        // Firebase auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userName').textContent = user.displayName || 'User';
+                document.getElementById('userJoined').textContent = user.metadata.creationTime
+                    ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                    : 'January 2025';
+            } else {
+                window.location.href = 'login.html'; // Redirect to login page if not authenticated
+            }
+        });
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { auth, registerUser, loginUser } from './firebase.js';
+        // Sign out functionality
+        document.getElementById('signOutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert('Signed out successfully!');
+            } catch (error) {
+                alert('Error signing out: ' + error.message);
+            }
+        });
 
-    let isRegistering = false;
+        // Placeholder for withdraw button
+        document.getElementById('withdrawBtn').addEventListener('click', () => {
+            alert('Withdraw functionality not implemented yet.');
+        });
 
-    window.showAuthForm = (registering) => {
-      isRegistering = registering;
-      document.getElementById("formTitle").innerText = registering ? "Регистрация" : "Авторизация";
-      document.getElementById("toggleText").innerHTML = registering
-        ? `Уже есть аккаунт? <a href="#" onclick="toggleForm()">Войти</a>`
-        : `Нет аккаунта? <a href="#" onclick="toggleForm()">Зарегистрироваться</a>`;
-      document.getElementById("authForm").style.display = "flex";
-    };
-
-    window.hideAuthForm = () => {
-      document.getElementById("authForm").style.display = "none";
-    };
-
-    window.toggleForm = () => {
-      showAuthForm(!isRegistering);
-    };
-
-    window.handleAuth = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        if (isRegistering) {
-          await registerUser(email, password);
-          alert("Успешная регистрация!");
-        } else {
-          await loginUser(email, password);
-          alert("Вход выполнен!");
-        }
-        hideAuthForm();
-      } catch (error) {
-        alert("Ошибка: " + error.message);
-      }
-    };
-  </script>
+        // Placeholder for settings button
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            alert('Settings not implemented yet.');
+        });
+    </script>
 </body>
 </html>
