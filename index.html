@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reemmy</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Spline+Sans:wght@400;700&display=swap"
@@ -12,19 +11,30 @@
     />
   </head>
   <body class="bg-[#221122] text-white font-sans" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
+
+    <!-- Логотип и описание -->
+    <section class="text-center py-8 px-4 bg-[#2d1433]">
+      <h1 class="text-4xl font-extrabold mb-2">Reemmy</h1>
+      <p class="text-lg text-gray-200">Платформа, где вы зарабатываете на видео даже с 1000 подписчиков.</p>
+    </section>
+
+    <!-- Форма -->
     <div id="authPage" class="min-h-screen flex items-center justify-center p-4">
-      <div class="bg-white text-black rounded-xl p-6 w-full max-w-sm space-y-4">
+      <div class="bg-[#2a1530] text-white rounded-xl p-6 w-full max-w-sm space-y-4 shadow-lg">
         <h2 class="text-2xl font-bold text-center" id="formTitle">Регистрация</h2>
 
-        <input type="text" id="name" placeholder="Имя" class="border px-3 py-2 w-full rounded" />
-        <input type="text" id="telegram" placeholder="Telegram (связь)" class="border px-3 py-2 w-full rounded" />
-        <input type="email" id="email" placeholder="Электронная почта" class="border px-3 py-2 w-full rounded" />
-        <input type="password" id="password" placeholder="Пароль" class="border px-3 py-2 w-full rounded" />
+        <div id="regFields">
+          <input type="text" id="name" placeholder="Имя" class="bg-white text-black border px-3 py-2 w-full rounded" />
+          <input type="text" id="telegram" placeholder="Telegram (связь)" class="bg-white text-black border px-3 py-2 w-full rounded" />
+        </div>
 
-        <button onclick="handleAuth()" class="w-full bg-[#ee2bee] text-white py-2 rounded font-bold">Продолжить</button>
+        <input type="email" id="email" placeholder="Электронная почта" class="bg-white text-black border px-3 py-2 w-full rounded" />
+        <input type="password" id="password" placeholder="Пароль" class="bg-white text-black border px-3 py-2 w-full rounded" />
+
+        <button onclick="handleAuth()" class="w-full bg-[#ee2bee] hover:bg-[#d01acb] text-white py-2 rounded font-bold">Продолжить</button>
 
         <p class="text-center text-sm" id="switchText">
-          Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-600">Войти</a>
+          Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Войти</a>
         </p>
       </div>
     </div>
@@ -54,11 +64,9 @@
         isRegistering = !isRegistering;
         document.getElementById("formTitle").innerText = isRegistering ? "Регистрация" : "Вход";
         document.getElementById("switchText").innerHTML = isRegistering
-          ? 'Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-600">Войти</a>'
-          : 'Нет аккаунта? <a href="#" onclick="toggleForm()" class="text-blue-600">Зарегистрироваться</a>';
-
-        document.getElementById("name").style.display = isRegistering ? "block" : "none";
-        document.getElementById("telegram").style.display = isRegistering ? "block" : "none";
+          ? 'Уже есть аккаунт? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Войти</a>'
+          : 'Нет аккаунта? <a href="#" onclick="toggleForm()" class="text-blue-400 underline">Зарегистрироваться</a>';
+        document.getElementById("regFields").style.display = isRegistering ? "block" : "none";
       };
 
       window.handleAuth = async () => {
