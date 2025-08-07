@@ -8,95 +8,96 @@ import {
 
 // DOM элементы
 const authScreen = document.getElementById('auth-screen');
-const mainScreen = document.getElementById('main-screen');
-const profileScreen = document.getElementById('profile-screen');
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
-const authForm = document.getElementById('auth-form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const profileEmail = document.getElementById('profile-email');
-const logoutBtns = document.querySelectorAll('#logout-nav-btn, #logout-nav-btn-2');
+const appScreen = document.getElementById('app-screen');
+const dynamicContent = document.getElementById('dynamic-content');
 const navBtns = document.querySelectorAll('.nav-btn');
 
-// Переключение между экранами
-function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.classList.add('hidden');
-  });
-  document.getElementById(screenId).classList.remove('hidden');
+// Шаблоны контента для каждого раздела
+const sections = {
+  main: `
+    <div class="section" id="main-section">
+      <div class="info-card">
+        <h2><i class="fas fa-info-circle"></i> Кто мы?</h2>
+        <p>Платформа для заработка на рекламе в социальных сетях.</p>
+      </div>
+      <div class="info-card">
+        <h2><i class="fas fa-question-circle"></i> Как это работает?</h2>
+        <p>Размещайте рекламные материалы и получайте деньги за просмотры.</p>
+      </div>
+    </div>
+  `,
   
-  // Обновление активных кнопок навигации
+  earn: `
+    <div class="section" id="earn-section">
+      <h2><i class="fas fa-coins"></i> Способы заработка</h2>
+      <div class="info-card">
+        <h3>TikTok</h3>
+        <p>500 ₽ за 1000 просмотров</p>
+      </div>
+      <div class="info-card">
+        <h3>YouTube</h3>
+        <p>300 ₽ за 1000 просмотров</p>
+      </div>
+    </div>
+  `,
+  
+  profile: `
+    <div class="section" id="profile-section">
+      <div class="profile-header">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <h2 id="profile-name">Имя пользователя</h2>
+        <div class="balance">Баланс: <span id="profile-balance">0 ₽</span></div>
+        <button id="withdraw-btn">Вывести деньги</button>
+      </div>
+    </div>
+  `,
+  
+  support: `
+    <div class="section" id="support-section">
+      <h2><i class="fas fa-headset"></i> Поддержка</h2>
+      <div class="info-card">
+        <p>Email: support@reemmy.ru</p>
+        <p>Telegram: @reemmy_support</p>
+      </div>
+    </div>
+  `
+};
+
+// Переключение разделов
+function loadSection(sectionId) {
+  dynamicContent.innerHTML = sections[sectionId];
+  
+  // Обновляем активную кнопку
   navBtns.forEach(btn => {
-    if (btn.dataset.screen === screenId) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+    btn.classList.toggle('active', btn.dataset.section === sectionId);
   });
 }
 
-// Обработчики навигации
+// Навигация
 navBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    if (btn.dataset.screen) {
-      showScreen(btn.dataset.screen);
-    }
+    loadSection(btn.dataset.section);
   });
 });
 
-// Проверка состояния аутентификации
+// Авторизация
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // Пользователь вошел в систему
     authScreen.classList.add('hidden');
-    showScreen('main-screen');
-    profileEmail.textContent = user.email;
+    appScreen.classList.remove('hidden');
+    loadSection('main'); // Загружаем главную по умолчанию
   } else {
-    // Пользователь вышел из системы
-    showScreen('auth-screen');
+    authScreen.classList.remove('hidden');
+    appScreen.classList.add('hidden');
   }
 });
 
-// Вход
-loginBtn.addEventListener('click', async (e) => {
-  e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (error) {
-    alert(error.message);
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+  // Проверяем авторизацию при загрузке
+  if (auth.currentUser) {
+    loadSection('main');
   }
-});
-
-// Регистрация
-signupBtn.addEventListener('click', async (e) => {
-  e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert('Регистрация прошла успешно!');
-  } catch (error) {
-    alert(error.message);
-  }
-});
-
-// Выход
-logoutBtns.forEach(btn => {
-  btn.addEventListener('click', async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-});
-
-// Переход в профиль при клике на карточку
-document.getElementById('profile-card').addEventListener('click', () => {
-  showScreen('profile-screen');
 });
