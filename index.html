@@ -20,7 +20,7 @@
       padding: 0;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: var(--ios-gray);
       color: var(--ios-dark);
       height: 100vh;
@@ -45,12 +45,32 @@
       border-radius: 14px;
       padding: 30px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      text-align: center;
     }
-    .auth-title {
-      font-size: 24px;
+    .logo-container {
+      text-align: center;
       margin-bottom: 30px;
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: bold;
       color: var(--ios-blue);
+      margin-bottom: 10px;
+    }
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--ios-separator);
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .auth-tab.active {
+      border-bottom: 2px solid var(--ios-blue);
+      color: var(--ios-blue);
+      font-weight: 500;
     }
     .input-group {
       position: relative;
@@ -82,6 +102,15 @@
       font-weight: 500;
       margin-top: 10px;
       cursor: pointer;
+    }
+    .ios-button.small {
+      padding: 8px 12px;
+      font-size: 14px;
+      width: auto;
+    }
+    .ios-button.danger {
+      background: var(--ios-red);
+      margin-top: 30px;
     }
     /* App Screen */
     #app-screen {
@@ -143,16 +172,6 @@
     .profile-header {
       text-align: center;
       margin-bottom: 20px;
-      position: relative;
-    }
-    .logout-btn {
-      position: absolute;
-      top: 0;
-      right: 16px;
-      color: var(--ios-red);
-      background: none;
-      border: none;
-      font-size: 14px;
     }
     .avatar {
       font-size: 60px;
@@ -163,113 +182,53 @@
       font-size: 20px;
       margin: 10px 0;
     }
-    .social-connect {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .connect-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 10px;
-      background: var(--ios-card);
-      border: 1px solid var(--ios-separator);
-    }
-    .connect-btn i {
-      font-size: 20px;
-    }
-    .tiktok-btn i {
-      color: #000;
-    }
-    .youtube-btn i {
-      color: #FF0000;
-    }
-    /* Materials */
-    .material-item {
-      margin-bottom: 20px;
-    }
-    .material-title {
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    .material-desc {
-      margin-bottom: 10px;
-      color: #666;
-    }
-    .copy-btn {
+    .profile-input {
       width: 100%;
       padding: 10px;
-      background: var(--ios-blue);
-      color: white;
-      border: none;
+      border: 1px solid var(--ios-separator);
       border-radius: 8px;
-      margin-top: 10px;
+      margin: 8px 0;
+    }
+    /* Materials */
+    .loading-placeholder {
+      text-align: center;
+      padding: 20px;
+      color: #8E8E93;
+    }
+    .loading-placeholder i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .material-item {
+      margin-bottom: 16px;
+    }
+    .material-item h3 {
+      margin-bottom: 8px;
+      color: var(--ios-dark);
+    }
+    .material-item p {
+      margin-bottom: 8px;
+      color: #666;
+    }
+    .material-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+    .take-btn {
+      background-color: var(--ios-blue);
+      color: white;
     }
     /* Stats */
-    .empty-state {
+    .stats-placeholder {
       text-align: center;
       padding: 40px 0;
       color: #8E8E93;
     }
-    /* Main */
-    .news-card {
+    .stats-placeholder i {
+      font-size: 50px;
       margin-bottom: 20px;
-    }
-    .news-image {
-      width: 100%;
-      height: 180px;
-      background-color: #ddd;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-    }
-    .support-section {
-      margin-top: 30px;
-    }
-    /* Modal */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: var(--ios-card);
-      border-radius: 14px;
-      padding: 20px;
-      width: 80%;
-      max-width: 300px;
-      text-align: center;
-    }
-    .modal-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .modal-btn {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-    }
-    .cancel-btn {
-      background: var(--ios-gray);
-    }
-    .confirm-btn {
-      background: var(--ios-red);
-      color: white;
+      color: var(--ios-blue);
     }
   </style>
 </head>
@@ -277,9 +236,16 @@
   <!-- Auth Screen -->
   <div id="auth-screen">
     <div class="auth-container">
-      <h1 class="auth-title">Reemmy</h1>
+      <div class="logo-container">
+        <div class="logo-text">Reemmy</div>
+        <p>Зарабатывайте на рекламе</p>
+      </div>
       
-      <!-- Login Form (shown by default) -->
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="login-tab">Вход</div>
+        <div class="auth-tab" id="signup-tab">Регистрация</div>
+      </div>
+      
       <form id="login-form">
         <div class="input-group">
           <i class="fas fa-envelope"></i>
@@ -290,25 +256,22 @@
           <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
         <button type="submit" class="ios-button">Войти</button>
-        <p style="margin-top: 15px;">Нет аккаунта? <a href="#" id="show-register">Зарегистрироваться</a></p>
       </form>
       
-      <!-- Register Form (hidden by default) -->
-      <form id="register-form" class="hidden">
+      <form id="signup-form" class="hidden">
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input type="text" id="register-name" placeholder="Имя" required>
+          <input type="text" id="signup-name" placeholder="Ваше имя" required>
         </div>
         <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input type="email" id="register-email" placeholder="Email" required>
+          <input type="email" id="signup-email" placeholder="Email" required>
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="register-password" placeholder="Пароль" required>
+          <input type="password" id="signup-password" placeholder="Пароль" required>
         </div>
         <button type="submit" class="ios-button">Зарегистрироваться</button>
-        <p style="margin-top: 15px;">Уже есть аккаунт? <a href="#" id="show-login">Войти</a></p>
       </form>
     </div>
   </div>
@@ -327,7 +290,7 @@
       </button>
       <button class="tab-btn" data-section="materials">
         <i class="fas fa-ad"></i>
-        <span>Материалы</span>
+        <span>Задания</span>
       </button>
       <button class="tab-btn" data-section="stats">
         <i class="fas fa-chart-line"></i>
@@ -340,284 +303,7 @@
     </nav>
   </div>
 
-  <!-- Logout Modal -->
-  <div id="logout-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Точно хотите выйти?</h3>
-      <div class="modal-buttons">
-        <button class="modal-btn cancel-btn" id="cancel-logout">Отмена</button>
-        <button class="modal-btn confirm-btn" id="confirm-logout">Выйти</button>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { 
-      auth, 
-      db,
-      ref,
-      set,
-      get,
-      update,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from './firebase.js';
-
-    // DOM Elements
-    const authScreen = document.getElementById('auth-screen');
-    const appScreen = document.getElementById('app-screen');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const showRegister = document.getElementById('show-register');
-    const showLogin = document.getElementById('show-login');
-    const dynamicContent = document.getElementById('dynamic-content');
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const logoutModal = document.getElementById('logout-modal');
-    const cancelLogout = document.getElementById('cancel-logout');
-    const confirmLogout = document.getElementById('confirm-logout');
-
-    // Show register form
-    showRegister.addEventListener('click', (e) => {
-      e.preventDefault();
-      loginForm.classList.add('hidden');
-      registerForm.classList.remove('hidden');
-    });
-
-    // Show login form
-    showLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      registerForm.classList.add('hidden');
-      loginForm.classList.remove('hidden');
-    });
-
-    // Login
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        alert('Ошибка входа: ' + error.message);
-      }
-    });
-
-    // Register
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('register-name').value;
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
-      
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        
-        // Save user data to database
-        await set(ref(db, `users/${user.uid}`), {
-          name,
-          email,
-          balance: 0,
-          rewards: {},
-          social: {
-            tiktok: null,
-            youtube: null
-          }
-        });
-        
-        alert('Регистрация успешна!');
-      } catch (error) {
-        alert('Ошибка регистрации: ' + error.message);
-      }
-    });
-
-    // Load section content
-    async function loadSection(sectionId, user) {
-      let content = '';
-      
-      switch(sectionId) {
-        case 'main':
-          content = `
-            <div class="ios-section">
-              <h2 class="ios-title">Главная</h2>
-              
-              <div class="ios-card news-card">
-                <div class="news-image">Изображение</div>
-                <h3>Reemmy - зарабатывать легко!</h3>
-                <p>Начните зарабатывать уже сегодня, размещая рекламу в своих соцсетях</p>
-              </div>
-              
-              <div class="ios-card">
-                <h3>Почему мы?</h3>
-                <p>• Высокие ставки за просмотры</p>
-                <p>• Мгновенные выплаты</p>
-                <p>• Простая система работы</p>
-              </div>
-              
-              <div class="ios-card support-section">
-                <h3>Поддержка</h3>
-                <p>Email: support@reemmy.ru</p>
-                <p>База знаний: help.reemmy.ru</p>
-              </div>
-            </div>
-          `;
-          break;
-          
-        case 'materials':
-          content = `
-            <div class="ios-section">
-              <h2 class="ios-title">Материалы</h2>
-              
-              <div class="ios-card material-item">
-                <h3 class="material-title">Задание 1</h3>
-                <p class="material-desc">Реклама от Reemmy - вставьте наш логотип в ваше видео</p>
-                <p>Оплата: <strong>0.1₽ за 1к просмотров</strong></p>
-                <button class="copy-btn">Копировать ссылку</button>
-              </div>
-              
-              <div class="ios-card material-item">
-                <h3 class="material-title">Задание 2</h3>
-                <p class="material-desc">Реклама нового продукта</p>
-                <p>Оплата: <strong>0.15₽ за 1к просмотров</strong></p>
-                <button class="copy-btn">Копировать ссылку</button>
-              </div>
-            </div>
-          `;
-          break;
-          
-        case 'stats':
-          content = `
-            <div class="ios-section">
-              <h2 class="ios-title">Статистика</h2>
-              <div class="ios-card empty-state">
-                <p>Скоро здесь появится ваша статистика</p>
-              </div>
-            </div>
-          `;
-          break;
-          
-        case 'profile':
-          const userData = await get(ref(db, `users/${user.uid}`));
-          const data = userData.val();
-          
-          content = `
-            <div class="ios-section">
-              <div class="profile-header">
-                <button class="logout-btn" id="show-logout-modal">
-                  <i class="fas fa-sign-out-alt"></i>
-                </button>
-                <div class="avatar">
-                  <i class="fas fa-user-circle"></i>
-                </div>
-                <h2>${data.name}</h2>
-                <p>${data.email}</p>
-                <div class="balance">
-                  <span>Баланс:</span>
-                  <strong>${data.balance || 0}₽</strong>
-                </div>
-              </div>
-              
-              <div class="ios-card">
-                <h3>Подключить соцсети</h3>
-                <div class="social-connect">
-                  <button class="connect-btn tiktok-btn" id="connect-tiktok">
-                    <i class="fab fa-tiktok"></i>
-                    <span>${data.social?.tiktok || 'Подключить TikTok'}</span>
-                  </button>
-                  <button class="connect-btn youtube-btn" id="connect-youtube">
-                    <i class="fab fa-youtube"></i>
-                    <span>${data.social?.youtube || 'Подключить YouTube'}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-          break;
-      }
-      
-      dynamicContent.innerHTML = content;
-      
-      // Update active tab
-      tabButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.section === sectionId);
-      });
-      
-      // Add event listeners for profile section
-      if (sectionId === 'profile') {
-        document.getElementById('show-logout-modal').addEventListener('click', () => {
-          logoutModal.classList.remove('hidden');
-        });
-        
-        // Add social connect handlers
-        document.getElementById('connect-tiktok').addEventListener('click', async () => {
-          const tiktok = prompt('Введите ваш TikTok @username');
-          if (tiktok) {
-            await update(ref(db, `users/${user.uid}/social`), {
-              tiktok
-            });
-            loadSection('profile', user);
-          }
-        });
-        
-        document.getElementById('connect-youtube').addEventListener('click', async () => {
-          const youtube = prompt('Введите ваш YouTube ID или ссылку');
-          if (youtube) {
-            await update(ref(db, `users/${user.uid}/social`), {
-              youtube
-            });
-            loadSection('profile', user);
-          }
-        });
-      }
-      
-      // Add copy handlers for materials
-      if (sectionId === 'materials') {
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            alert('Ссылка скопирована в буфер обмена!');
-          });
-        });
-      }
-    }
-
-    // Tab navigation
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const user = auth.currentUser;
-        if (user) loadSection(btn.dataset.section, user);
-      });
-    });
-
-    // Logout modal
-    cancelLogout.addEventListener('click', () => {
-      logoutModal.classList.add('hidden');
-    });
-    
-    confirmLogout.addEventListener('click', async () => {
-      await signOut(auth);
-      logoutModal.classList.add('hidden');
-    });
-
-    // Auth state listener
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authScreen.classList.add('hidden');
-        appScreen.classList.remove('hidden');
-        loadSection('main', user);
-      } else {
-        authScreen.classList.remove('hidden');
-        appScreen.classList.add('hidden');
-        
-        // Reset forms
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-      }
-    });
-  </script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
