@@ -1,36 +1,53 @@
 body {
-  font-family: sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: #0f0f1a; /* Тёмный фон */
-  color: #f4f4f4; /* Светлый текст */
-  text-align: center;
+  font-family: sans-serif;
+  background-color: #0f0f1a;
+  color: #fff;
 }
 
 header {
-  background-color: #6a0dad; /* Фиолетовый */
+  background-color: #6a0dad;
   color: white;
-  padding: 2rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.register-btn {
+  background-color: #a855f7;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
 }
 
 main {
-  padding: 2rem;
+  padding: 2rem 1rem;
+  text-align: center;
 }
 
-section ul {
-  list-style: none;
-  padding: 0;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1c1c2b;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.7rem 0;
+  border-top: 1px solid #333;
 }
 
-section li {
-  margin: 1rem 0;
-  font-size: 1.2rem;
-  color: #d8b4fe; /* Светло-фиолетовый акцент */
-}
-
-footer {
-  background-color: #1a1a2e;
+.nav-item {
+  flex: 1;
+  text-align: center;
   color: #ccc;
-  padding: 1rem;
-  font-size: 0.9rem;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: #a855f7;
 }
