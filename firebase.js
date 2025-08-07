@@ -13,7 +13,8 @@ import {
   get,
   update,
   push,
-  child
+  child,
+  onValue
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -26,10 +27,12 @@ const firebaseConfig = {
   appId: "1:1013780844206:web:7fc8af82eecf80ee04673f"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Экспортируем все необходимые функции
 export {
   auth,
   db,
@@ -39,6 +42,7 @@ export {
   update,
   push,
   child,
+  onValue,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
