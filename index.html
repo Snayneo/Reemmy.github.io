@@ -4,193 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reemmy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ios-blue: #007AFF;
-      --ios-gray: #F2F2F7;
-      --ios-dark: #1C1C1E;
-      --ios-card: #FFFFFF;
-      --ios-separator: #E5E5EA;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--ios-gray);
-      color: var(--ios-dark);
-      height: 100vh;
-      overflow: hidden;
-    }
-    .hidden {
-      display: none !important;
-    }
-    /* Auth Screen */
-    #auth-screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      padding: 20px;
-      background-color: var(--ios-gray);
-    }
-    .auth-container {
-      width: 100%;
-      max-width: 400px;
-      background: var(--ios-card);
-      border-radius: 14px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    }
-    .logo-container {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .logo {
-      height: 60px;
-      margin-bottom: 10px;
-    }
-    .input-group {
-      position: relative;
-      margin-bottom: 15px;
-    }
-    .input-group i {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #8E8E93;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 15px 15px 15px 45px;
-      border: 1px solid var(--ios-separator);
-      border-radius: 10px;
-      font-size: 16px;
-      background: var(--ios-card);
-    }
-    .ios-button {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: var(--ios-blue);
-      color: white;
-      font-size: 16px;
-      font-weight: 500;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    .ios-button.secondary {
-      background: transparent;
-      color: var(--ios-blue);
-      border: 1px solid var(--ios-blue);
-    }
-    /* App Screen */
-    #app-screen {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding-bottom: 80px;
-    }
-    /* iOS Tab Bar */
-    .ios-tabbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      background: var(--ios-card);
-      border-top: 1px solid var(--ios-separator);
-      padding: 10px 0;
-      z-index: 100;
-    }
-    .tab-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: none;
-      border: none;
-      color: #8E8E93;
-      font-size: 12px;
-      padding: 5px 0;
-    }
-    .tab-btn.active {
-      color: var(--ios-blue);
-    }
-    .tab-btn i {
-      font-size: 22px;
-      margin-bottom: 4px;
-    }
-    /* Sections */
-    .ios-section {
-      padding: 16px;
-    }
-    .ios-title {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    .ios-card {
-      background: var(--ios-card);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    /* Profile */
-    .profile-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 60px;
-      color: var(--ios-blue);
-      margin-bottom: 10px;
-    }
-    .balance {
-      font-size: 20px;
-      margin: 10px 0;
-    }
-    /* Materials */
-    .material-item {
-      position: relative;
-    }
-    .copy-btn {
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      padding: 5px 10px;
-      font-size: 12px;
-    }
-    /* Rewards */
-    .reward-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="ios-style">
-  <!-- Auth Screen -->
-  <div id="auth-screen">
-    <div class="auth-container">
-      <div class="logo-container">
-        <img src="logo.png" alt="Reemmy" class="logo">
-        <h2>Добро пожаловать</h2>
-      </div>
-      <form id="auth-form">
+  <!-- Экран авторизации -->
+  <div id="auth-screen" class="screen">
+    <div class="ios-section">
+      <h2 class="ios-title">Reemmy</h2>
+      <div id="auth-form">
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input type="text" id="name" placeholder="Ваше имя" required>
+          <input type="text" id="name" placeholder="Имя" required>
         </div>
         <div class="input-group">
           <i class="fas fa-envelope"></i>
@@ -200,48 +25,34 @@
           <i class="fas fa-lock"></i>
           <input type="password" id="password" placeholder="Пароль" required>
         </div>
-        <div class="input-group">
-          <i class="fab fa-tiktok"></i>
-          <input type="text" id="tiktok" placeholder="@username TikTok">
-        </div>
-        <div class="input-group">
-          <i class="fab fa-youtube"></i>
-          <input type="text" id="youtube" placeholder="YouTube ID">
-        </div>
-        <button type="submit" id="login-btn" class="ios-button">Войти</button>
-        <button type="button" id="signup-btn" class="ios-button secondary">Регистрация</button>
-      </form>
+        <button id="signup-btn" class="ios-button">Зарегистрироваться</button>
+        <button id="switch-to-login" class="ios-button secondary">Уже есть аккаунт? Войти</button>
+      </div>
     </div>
   </div>
 
-  <!-- Main App Screen -->
-  <div id="app-screen" class="hidden">
-    <div class="content" id="dynamic-content">
-      <!-- Content will be loaded dynamically -->
+  <!-- Экран приложения -->
+  <div id="app-screen" class="screen hidden">
+    <div id="dynamic-content"></div>
+    <div class="ios-tabbar">
+      <button class="tab-btn" data-section="main"><i class="fas fa-home"></i>Главная</button>
+      <button class="tab-btn" data-section="materials"><i class="fas fa-ad"></i>Материалы</button>
+      <button class="tab-btn" data-section="stats"><i class="fas fa-chart-bar"></i>Статистика</button>
+      <button class="tab-btn" data-section="profile"><i class="fas fa-user"></i>Профиль</button>
     </div>
-
-    <!-- iOS Style Tab Bar -->
-    <nav class="ios-tabbar">
-      <button class="tab-btn active" data-section="main">
-        <i class="fas fa-home"></i>
-        <span>Главная</span>
-      </button>
-      <button class="tab-btn" data-section="materials">
-        <i class="fas fa-ad"></i>
-        <span>Материалы</span>
-      </button>
-      <button class="tab-btn" data-section="stats">
-        <i class="fas fa-chart-line"></i>
-        <span>Статистика</span>
-      </button>
-      <button class="tab-btn" data-section="profile">
-        <i class="fas fa-user"></i>
-        <span>Профиль</span>
-      </button>
-    </nav>
   </div>
 
-  <script type="module" src="firebase.js"></script>
+  <!-- Модальное окно для выхода -->
+  <div id="logout-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Точно хотите выйти?</h3>
+      <div class="modal-buttons">
+        <button id="confirm-logout" class="ios-button red">Выйти</button>
+        <button id="cancel-logout" class="ios-button secondary">Отмена</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
