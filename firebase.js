@@ -18,7 +18,8 @@ import {
   get,
   update,
   push,
-  child
+  child,
+  remove
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -44,6 +45,7 @@ export {
   update,
   push,
   child,
+  remove,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
