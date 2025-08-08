@@ -1,148 +1,160 @@
-/* Основные стили */
-body.ios-style {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+/* === Базовые стили === */
+body {
   margin: 0;
-  padding: 0;
-  background-color: #f2f2f7;
-  color: #1c1c1e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f9f9f9;
+  color: #111;
 }
 
-/* Контейнер авторизации */
-.auth-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 30px 20px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.hidden {
+  display: none !important;
 }
 
-.logo-container {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.logo-text {
-  font-size: 32px;
-  font-weight: 700;
-  color: #007aff;
-  margin-bottom: 8px;
-}
-
-/* Вкладки авторизации */
-.auth-tabs {
-  display: flex;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e5e5ea;
-}
-
-.auth-tab {
-  flex: 1;
-  text-align: center;
-  padding: 12px 0;
-  cursor: pointer;
-  color: #8e8e93;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.auth-tab.active {
-  color: #007aff;
-  border-bottom: 2px solid #007aff;
-}
-
-/* Формы */
-.input-group {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.input-group i {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #8e8e93;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 12px 12px 12px 40px;
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #007aff;
-}
-
-/* Кнопки */
-.ios-button {
-  width: 100%;
-  padding: 14px;
-  background-color: #007aff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-}
-
-.ios-button:hover {
-  background-color: #0062cc;
-}
-
-.ios-button.small {
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
-/* Уведомления */
+/* === Уведомления === */
 .notification {
   position: fixed;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 20px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  z-index: 1000;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
+  background: #fff;
+  color: #111;
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 15px;
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
 }
-
 .notification.success {
-  background-color: #34c759;
+  border-left: 4px solid #4caf50;
 }
-
 .notification.error {
-  background-color: #ff3b30;
-}
-
-.notification.hidden {
-  animation: fadeOut 0.3s forwards;
+  border-left: 4px solid #f44336;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; top: 0; }
-  to { opacity: 1; top: 20px; }
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; top: 20px; }
-  to { opacity: 0; top: 0; }
+/* === Экран авторизации === */
+#auth-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* Главный экран приложения */
+.auth-container {
+  background: #fff;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 360px;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #007aff;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  background: #f1f1f1;
+}
+
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  transition: background 0.3s, color 0.3s;
+}
+
+.auth-tab.active {
+  background: #007aff;
+  color: white;
+}
+
+/* === Формы === */
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.input-group i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.input-group input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 15px;
+}
+
+.show-password {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.ios-button {
+  background: #007aff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ios-button:disabled {
+  background: #9ecaff;
+  cursor: not-allowed;
+}
+
+.btn-loader {
+  margin-left: 8px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.auth-footer a {
+  color: #007aff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+/* === Главный экран === */
 #app-screen {
   display: flex;
   flex-direction: column;
@@ -151,221 +163,53 @@ body.ios-style {
 
 .content {
   flex: 1;
+  padding: 15px;
   overflow-y: auto;
-  padding-bottom: 60px;
 }
 
-.ios-section {
-  padding: 16px;
-}
-
-.ios-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 16px 0;
-}
-
-/* Карточки */
-.ios-card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.card-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-/* Таббар */
+/* === iOS Tabbar === */
 .ios-tabbar {
   display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  background-color: white;
-  border-top: 1px solid #e5e5ea;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  border-top: 1px solid #ddd;
+  background: #fff;
 }
 
 .tab-btn {
+  flex: 1;
+  padding: 8px 0;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 13px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: none;
-  border: none;
-  color: #8e8e93;
-  font-size: 10px;
-  cursor: pointer;
-  padding: 8px;
 }
 
 .tab-btn i {
-  font-size: 22px;
-  margin-bottom: 4px;
+  font-size: 18px;
 }
 
 .tab-btn.active {
   color: #007aff;
 }
 
-/* Профиль */
-.profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  background-color: #e5e5ea;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 16px;
-}
-
-.avatar i {
-  font-size: 40px;
-  color: #8e8e93;
-}
-
-.profile-info h3 {
-  margin: 0 0 4px 0;
-  font-size: 20px;
-}
-
-.profile-info p {
-  margin: 0;
-  color: #8e8e93;
-}
-
-.profile-actions {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-/* Задания */
-.task-card {
-  background-color: white;
+/* === Сообщение поддержки под заданиями === */
+.support-message {
+  background: #f1f5ff;
+  padding: 12px;
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.task-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.task-header h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.task-reward {
-  color: #34c759;
-  font-weight: 600;
-}
-
-/* Статистика */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  color: #8e8e93;
+  margin-top: 10px;
   font-size: 14px;
+  color: #333;
+  border-left: 4px solid #007aff;
 }
 
-/* Кнопка показа пароля */
-.show-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #8e8e93;
-  cursor: pointer;
-  padding: 5px;
-}
-
-/* Футер формы авторизации */
-.auth-footer {
-  margin-top: 16px;
-  text-align: center;
-}
-
-.auth-footer a {
-  color: #007aff;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-/* Индикаторы загрузки */
-.ios-button .btn-text,
-.ios-button .btn-loader {
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.ios-button .btn-loader {
-  margin-left: 8px;
-}
-
-.ios-button .hidden {
-  display: none;
-}
-
-/* Скрытые элементы */
-.hidden {
-  display: none;
-}
-
-/* Адаптивные стили */
-@media (max-width: 480px) {
+/* === Мелкая адаптивность === */
+@media (max-width: 400px) {
   .auth-container {
-    padding: 20px 15px;
-    margin: 0 15px;
-  }
-  
-  .logo-text {
-    font-size: 28px;
-  }
-  
-  .ios-card {
-    padding: 12px;
+    padding: 20px;
+    border-radius: 16px;
   }
 }
