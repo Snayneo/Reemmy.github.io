@@ -32,8 +32,17 @@
         <div class="input-group">
           <i class="fas fa-lock"></i>
           <input type="password" id="login-password" placeholder="Пароль" required>
+          <button type="button" class="show-password" id="show-login-password">
+            <i class="fas fa-eye"></i>
+          </button>
         </div>
-        <button type="submit" class="ios-button">Войти</button>
+        <button type="submit" class="ios-button" id="login-btn">
+          <span class="btn-text">Войти</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+        <div class="auth-footer">
+          <a href="#" id="forgot-password">Забыли пароль?</a>
+        </div>
       </form>
       
       <form id="signup-form" class="hidden">
@@ -47,9 +56,15 @@
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="signup-password" placeholder="Пароль" required>
+          <input type="password" id="signup-password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+          <button type="button" class="show-password" id="show-signup-password">
+            <i class="fas fa-eye"></i>
+          </button>
         </div>
-        <button type="submit" class="ios-button">Зарегистрироваться</button>
+        <button type="submit" class="ios-button" id="signup-btn">
+          <span class="btn-text">Зарегистрироваться</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
       </form>
     </div>
   </div>
@@ -79,21 +94,6 @@
         <span>Профиль</span>
       </button>
     </nav>
-  </div>
-
-  <!-- Modal for comments -->
-  <div id="comment-modal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h3>Отправка на рассмотрение</h3>
-      <textarea id="comment-text" placeholder="Оставьте комментарий (ссылку на пост и т.д.)"></textarea>
-      <input type="file" id="screenshot-upload" accept="image/*" class="hidden">
-      <label for="screenshot-upload" class="ios-button small">
-        <i class="fas fa-image"></i> Прикрепить скриншот
-      </label>
-      <div id="screenshot-preview" class="hidden"></div>
-      <button id="submit-review" class="ios-button">Отправить на проверку</button>
-    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
