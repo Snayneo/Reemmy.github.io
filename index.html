@@ -1,74 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reemmy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reemmy — партнерка</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="ios-style">
+<body>
   <div id="notification" class="notification hidden"></div>
 
-  <!-- Auth Screen -->
-  <div id="auth-screen">
-    <div class="auth-container">
-      <div class="logo-container">
-        <div class="logo-text">Reemmy</div>
-        <p>Зарабатывайте на рекламе</p>
+  <!-- AUTH SCREEN -->
+  <main id="auth-screen" class="screen">
+    <div class="auth-card">
+      <h1>Reemmy</h1>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-mode="login" id="tab-login">Вход</button>
+        <button class="tab-btn" data-mode="signup" id="tab-signup">Регистрация</button>
       </div>
-      
-      <form id="login-form">
-        <div class="input-group">
-          <i class="fas fa-envelope"></i>
-          <input type="email" id="login-email" placeholder="Email" required>
-        </div>
-        <div class="input-group">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="login-password" placeholder="Пароль" required>
-        </div>
-        <button type="submit" class="ios-button">Войти</button>
+
+      <!-- Login -->
+      <form id="login-form" class="form active">
+        <input type="email" id="login-email" placeholder="Email" required />
+        <input type="password" id="login-password" placeholder="Пароль" required />
+        <button type="submit" class="btn">Войти</button>
+        <p class="muted"><a href="#" id="show-password-reset">Забыли пароль?</a></p>
       </form>
-      
-      <form id="signup-form" class="hidden">
-        <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input type="text" id="signup-name" placeholder="Ваше имя" required>
-        </div>
-        <div class="input-group">
-          <i class="fas fa-envelope"></i>
-          <input type="email" id="signup-email" placeholder="Email" required>
-        </div>
-        <div class="input-group">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="signup-password" placeholder="Пароль" required>
-        </div>
-        <button type="submit" class="ios-button">Зарегистрироваться</button>
+
+      <!-- Signup -->
+      <form id="signup-form" class="form">
+        <input type="text" id="signup-name" placeholder="Имя" required />
+        <input type="email" id="signup-email" placeholder="Email" required />
+        <input type="password" id="signup-password" placeholder="Пароль (6+ символов)" required />
+        <button type="submit" class="btn">Зарегистрироваться</button>
+        <p class="muted">После регистрации — подтвердите почту</p>
+      </form>
+
+      <!-- Password reset -->
+      <form id="password-reset-form" class="form hidden">
+        <input type="email" id="reset-email" placeholder="Email для сброса" required />
+        <button type="submit" class="btn">Отправить ссылку</button>
+        <p class="muted"><a href="#" id="back-to-login">Вернуться</a></p>
       </form>
     </div>
+  </main>
+
+  <!-- APP SCREEN -->
+  <div id="app-screen" class="screen hidden">
+    <aside class="sidebar">
+      <div class="side-header">
+        <div id="small-avatar" class="small-avatar"><i class="fas fa-user"></i></div>
+        <div>
+          <div id="small-name">Загрузка...</div>
+          <div class="small-email" id="small-email">—</div>
+        </div>
+      </div>
+
+      <nav class="tabs-vertical">
+        <button class="tab-btn" data-tab="main">Главная</button>
+        <button class="tab-btn" data-tab="materials">Задания</button>
+        <button class="tab-btn" data-tab="stats">Статистика</button>
+        <button class="tab-btn" data-tab="profile">Профиль</button>
+        <button class="tab-btn" data-tab="withdrawal">Вывод</button>
+        <button class="tab-btn" data-tab="admin" id="admin-tab" style="display:none">Админ</button>
+        <button class="logout-btn" id="logout-btn">Выйти</button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div id="dynamic-content"></div>
+    </main>
   </div>
 
-  <!-- Main App Screen -->
-  <div id="app-screen" class="hidden">
-    <div class="content" id="dynamic-content"></div>
-
-    <nav class="ios-tabbar">
-      <button class="tab-btn active" data-section="main">
-        <i class="fas fa-home"></i>
-        <span>Главная</span>
-      </button>
-      <button class="tab-btn" data-section="materials">
-        <i class="fas fa-ad"></i>
-        <span>Задания</span>
-      </button>
-      <button class="tab-btn" data-section="profile">
-        <i class="fas fa-user"></i>
-        <span>Профиль</span>
-      </button>
-    </nav>
-  </div>
-
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="app.js"></script>
+  <!-- scripts -->
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
