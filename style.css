@@ -1,3 +1,22 @@
+:root{
+  --bg:#f6f6f8;
+  --card:#ffffff;
+  --muted:#8a8a93;
+  --accent:#007AFF;
+  --danger:#ef4444;
+  --ios-shadow: 0 8px 20px rgba(20,20,30,0.06);
+  --radius:14px;
+  --soft-radius:12px;
+}
+
+*{box-sizing:border-box}
+body.ios-style{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#111;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 :root {
   --ios-blue: #007AFF;
   --ios-red: #FF3B30;
@@ -32,6 +51,96 @@ body {
 }
 
 /* Notification */
+.notification{
+  position:fixed;
+  right:16px;
+  top:16px;
+  padding:10px 14px;
+  border-radius:10px;
+  box-shadow:var(--ios-shadow);
+  z-index:9999;
+  background: #EAF8FF;
+  color: #014F86;
+  font-weight:600;
+}
+.notification.error{ background:#FFF0F0; color:#7F1D1D; }
+
+/* Auth screen */
+.auth-container{
+  max-width:420px;
+  margin:28px auto;
+  background:transparent;
+  padding:0 18px;
+}
+.logo-container{ text-align:center; margin-bottom:12px; }
+.logo-text{ font-weight:700; font-size:22px; color:#111; }
+.auth-tabs{ display:flex; gap:8px; justify-content:center; margin-bottom:12px; }
+.auth-tab{
+  padding:8px 14px; border-radius:12px; background:transparent; color:var(--muted); cursor:pointer;
+  border:1px solid transparent;
+}
+.auth-tab.active{ background:var(--card); color:var(--accent); box-shadow:var(--ios-shadow); border-color:#eee; }
+
+.auth-container .input-group{ display:flex; align-items:center; gap:10px; background:var(--card); padding:10px 12px; border-radius:12px; margin-bottom:10px; box-shadow:var(--ios-shadow); }
+.auth-container .input-group i{ color:var(--muted); }
+.auth-container input{ border:0; outline:none; font-size:15px; width:100%; background:transparent; }
+
+/* App layout */
+.content{ max-width:720px; margin:0 auto; padding:18px 18px 90px; } /* bottom padding for tabbar */
+.ios-section{ margin-bottom:12px; }
+.ios-card{ background:var(--card); border-radius:var(--radius); padding:14px; box-shadow:var(--ios-shadow); margin-bottom:12px; }
+.ios-title{ font-size:18px; margin:0 0 12px 0; }
+
+/* Profile header */
+.profile-header{ display:flex; align-items:center; gap:12px; padding:12px; background:transparent; }
+.avatar-upload{ display:flex; align-items:center; gap:12px; }
+.avatar-preview{ width:84px; height:84px; border-radius:999px; object-fit:cover; background:#e9eef8; display:block; box-shadow:0 6px 18px rgba(0,0,0,0.06); border:4px solid rgba(255,255,255,0.7); }
+.avatar-upload-btn{ display:inline-block; padding:8px 10px; background:var(--card); border-radius:10px; cursor:pointer; box-shadow:var(--ios-shadow); color:var(--muted); font-weight:600; }
+.profile-header h2{ margin:0; font-size:20px; }
+.balance{ margin-left:auto; text-align:right; }
+.balance strong{ color:var(--accent); font-size:18px; display:block; }
+
+/* Inputs / buttons */
+.profile-input{ width:100%; padding:10px; margin-top:8px; border-radius:10px; border:1px solid #eef2f5; background:transparent; font-size:15px; }
+.ios-button{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:0; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(0,122,255,0.12); }
+.ios-button.small{ padding:8px 10px; font-size:14px; border-radius:10px; }
+.ios-button.danger{ background:var(--danger); box-shadow:none; }
+
+/* Material list */
+.materials-filters{ display:flex; gap:8px; margin-bottom:12px; }
+.filter-btn{ padding:8px 10px; border-radius:10px; background:var(--card); border:1px solid transparent; cursor:pointer; color:var(--muted); box-shadow:var(--ios-shadow); }
+.filter-btn.active{ background:linear-gradient(180deg, #fff, #f8fbff); color:var(--accent); border-color:#e6f0ff; }
+
+/* material item */
+.material-item{ padding:12px; border-radius:12px; }
+.material-head{ display:flex; gap:8px; align-items:center; font-size:15px; margin-bottom:6px; }
+.material-description{ color:var(--muted); margin-bottom:8px; }
+.material-row{ display:flex; justify-content:space-between; color:var(--muted); font-size:13px; margin-bottom:8px; }
+
+/* status badges */
+.status-badge{ padding:6px 8px; border-radius:10px; background:#f2f2f7; color:var(--muted); display:inline-flex; gap:8px; align-items:center; }
+
+/* stats */
+.stats-summary{ display:flex; gap:10px; flex-wrap:wrap; }
+.stat-card{ background:var(--card); padding:12px; border-radius:12px; width:calc(50% - 8px); box-shadow:var(--ios-shadow); }
+
+/* modals */
+.modal{ position:fixed; left:0; top:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.35); z-index:9999; }
+.modal.hidden{ display:none; }
+.modal-content{ width:92%; max-width:420px; background:var(--card); border-radius:12px; padding:14px; box-shadow:var(--ios-shadow); }
+
+/* loading overlay */
+.loading-overlay{ position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(255,255,255,0.7); display:flex; align-items:center; justify-content:center; z-index:9998; }
+.loading-content{ background:var(--card); padding:12px 16px; border-radius:12px; display:flex; gap:10px; align-items:center; box-shadow:var(--ios-shadow); }
+
+/* bottom tabbar */
+.ios-tabbar{ position:fixed; left:0; right:0; bottom:0; display:flex; gap:0; background:var(--card); border-top:1px solid #eee; padding:8px 6px; justify-content:space-around; align-items:center; }
+.tab-btn{ background:transparent; border:0; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; padding:6px 8px; border-radius:10px; }
+.tab-btn.active{ color:var(--accent); }
+
+@media (min-width:900px){
+  .content{ padding-left:40px; padding-right:40px; }
+  .ios-card{ max-width:760px; margin:12px auto; }
 .notification {
   position: fixed;
   top: 28px;
@@ -693,36 +802,4 @@ body {
     width: 80px;
     height: 80px;
   }
-}
-/* Добавьте эти стили в конец файла */
-
-/* Модерация */
-.moderator-comment {
-  background-color: #FFF0F0;
-  border-left: 3px solid var(--ios-red);
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 0 8px 8px 0;
-  font-size: 14px;
-}
-
-.moderator-comment p {
-  margin-bottom: 5px;
-}
-
-.rejected-status {
-  color: var(--ios-red);
-  font-weight: bold;
-}
-
-.resubmit-btn {
-  background-color: var(--ios-red) !important;
-  margin-top: 10px;
-}
-
-.platform-warning {
-  color: var(--ios-red);
-  font-size: 14px;
-  margin-top: 10px;
-  display: none;
 }
