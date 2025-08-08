@@ -37,7 +37,8 @@ const userDataTemplate = {
   youtube: "",
   balance: 0,
   rewards: {},
-  materials: {}
+  materials: {},
+  avatarUrl: ""
 };
 
 // Шаблоны контента
@@ -46,12 +47,12 @@ const sections = {
     <div class="ios-section">
       <h2 class="ios-title">Главная</h2>
       <div class="ios-card news-card">
-        <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Reemmy" class="card-image">
+        <img src="https://i.ibb.co/0jQ7J3T/reemmy-banner.jpg" alt="Reemmy" class="card-image">
         <h3>Reemmy - ваш заработок в соцсетях!</h3>
         <p>Монетизируйте ваш контент легко и просто с нашей платформой</p>
       </div>
       <div class="ios-card">
-        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Заработок" class="card-image">
+        <img src="https://i.ibb.co/7Yk1Z4Q/earn-money.jpg" alt="Заработок" class="card-image">
         <h3><i class="fas fa-star"></i> Преимущества</h3>
         <p>Только проверенные рекламодатели и стабильные выплаты</p>
         <ul class="benefits-list">
@@ -120,6 +121,22 @@ const sections = {
         <input type="text" id="name-input" placeholder="Ваше имя" class="profile-input">
         <button class="ios-button small" id="save-name">
           <span class="btn-text">Сохранить имя</span>
+        </button>
+      </div>
+      
+      <div class="ios-card">
+        <h3><i class="fab fa-tiktok"></i> Подключить TikTok</h3>
+        <input type="text" id="tiktok-input" placeholder="@username" class="profile-input">
+        <button class="ios-button small" id="save-tiktok">
+          <span class="btn-text">Сохранить</span>
+        </button>
+      </div>
+      
+      <div class="ios-card">
+        <h3><i class="fab fa-youtube"></i> Подключить YouTube</h3>
+        <input type="text" id="youtube-input" placeholder="ID канала" class="profile-input">
+        <button class="ios-button small" id="save-youtube">
+          <span class="btn-text">Сохранить</span>
         </button>
       </div>
       
@@ -243,7 +260,7 @@ async function displayMaterials(filterPlatform = 'all') {
     const isAccepted = !!userMaterial;
     const isCompleted = userMaterial?.status === 'completed';
     const isPending = userMaterial?.status === 'pending';
-    const isRejected = userMaterial?.status === 'not_completed';
+    const isRejected = userMaterial?.status === 'rejected';
     
     return `
     <div class="ios-card material-item" data-id="${id}" data-platform="${material.platform || 'other'}">
@@ -265,12 +282,12 @@ async function displayMaterials(filterPlatform = 'all') {
           </button>
         ` : isPending ? `
           <button class="ios-button small in-progress-btn" disabled>
-            <i class="fas fa-hourglass-half"></i> На рассмотрении
+            <i class="fas fa-hourglass-half"></i> На проверке
           </button>
         ` : isRejected ? `
           <div>
             <button class="ios-button small rejected-btn" disabled>
-              <i class="fas fa-times-circle"></i> Не выполнено
+              <i class="fas fa-times-circle"></i> Отклонено
             </button>
             ${userMaterial?.rejectionReason ? `
               <div class="task-comment">
@@ -282,11 +299,12 @@ async function displayMaterials(filterPlatform = 'all') {
             </button>
           </div>
         ` : isAccepted ? `
-          <button class="ios-button small in-progress-btn" disabled>
-            <i class="fas fa-hourglass-half"></i> В процессе
+          <button class="ios-button small take-btn" data-id="${id}">
+            <span class="btn-text">Отправить на проверку</span>
+            <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
           </button>
         ` : `
-          <button class="ios-button small take-btn">
+          <button class="ios-button small take-btn" data-id="${id}">
             <span class="btn-text">Принять задание</span>
             <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
           </button>
@@ -296,20 +314,31 @@ async function displayMaterials(filterPlatform = 'all') {
     `;
   }).join('');
 
-  // Обработчики для кнопок
+  // Обработчики для кнопок заданий
   document.querySelectorAll('.take-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
+      const materialId = this.dataset.id;
       const btnText = this.querySelector('.btn-text');
       const btnLoader = this.querySelector('.btn-loader');
       
       btnText.classList.add('hidden');
       btnLoader.classList.remove('hidden');
       
-      const materialId = this.closest('.material-item').dataset.id;
       const uid = auth.currentUser?.uid;
+      const userData = await loadUserData(uid);
+      const currentStatus = userData?.materials?.[materialId]?.status;
       
-      if (uid) {
-        try {
+      try {
+        if (currentStatus === 'in_progress') {
+          // Отправка на проверку
+          await update(ref(db, `users/${uid}/materials/${materialId}`), {
+            status: 'pending',
+            submittedAt: new Date().toISOString()
+          });
+          showNotification('Задание отправлено на проверку!');
+        } else {
+          // Принятие задания
+          const materials = await loadMaterials();
           await update(ref(db, `users/${uid}/materials`), {
             [materialId]: {
               accepted: new Date().toISOString(),
@@ -322,13 +351,13 @@ async function displayMaterials(filterPlatform = 'all') {
             }
           });
           showNotification('Задание успешно принято!');
-          displayMaterials(filterPlatform);
-        } catch (error) {
-          showNotification(`Ошибка: ${error.message}`, 'error');
-        } finally {
-          btnText.classList.remove('hidden');
-          btnLoader.classList.add('hidden');
         }
+        displayMaterials(filterPlatform);
+      } catch (error) {
+        showNotification(`Ошибка: ${error.message}`, 'error');
+      } finally {
+        btnText.classList.remove('hidden');
+        btnLoader.classList.add('hidden');
       }
     });
   });
@@ -374,186 +403,74 @@ async function displayStats(uid) {
   `;
 
   const userData = await loadUserData(uid);
-  const isAdmin = uid === 'BNf2Iwb7KoMrFoPLI2hjTwZ5NRg2';
   
-  if (isAdmin) {
-    // Интерфейс администратора
-    const allUsers = await get(ref(db, 'users')).then(snapshot => snapshot.val());
-    let pendingTasks = [];
-    
-    for (const userId in allUsers) {
-      const user = allUsers[userId];
-      if (user.materials) {
-        for (const materialId in user.materials) {
-          const task = user.materials[materialId];
-          if (task.status === 'pending') {
-            pendingTasks.push({
-              userId,
-              materialId,
-              ...task,
-              userName: user.name || 'Аноним'
-            });
-          }
-        }
-      }
-    }
-    
+  if (!userData?.materials || Object.keys(userData.materials).length === 0) {
     statsContainer.innerHTML = `
-      <h3>Задания на подтверждение</h3>
-      ${pendingTasks.length > 0 ? 
-        pendingTasks.map(task => `
-          <div class="ios-card pending-task">
-            <h4>${task.title}</h4>
-            <p><strong>Пользователь:</strong> ${task.userName}</p>
-            <p><strong>Просмотров:</strong> ${task.views || 0}</p>
-            <p><strong>Вознаграждение:</strong> ${task.reward || 0}₽</p>
-            <div class="task-actions">
-              <button class="ios-button small approve-btn" data-user-id="${task.userId}" data-material-id="${task.materialId}">
-                <i class="fas fa-check"></i> Подтвердить
-              </button>
-              <button class="ios-button small reject-btn" data-user-id="${task.userId}" data-material-id="${task.materialId}">
-                <i class="fas fa-times"></i> Отклонить
-              </button>
-            </div>
-          </div>
-        `).join('') : 
-        '<p>Нет заданий на подтверждение</p>'
-      }
-    `;
-    
-    // Обработчики для администратора
-    document.querySelectorAll('.approve-btn').forEach(btn => {
-      btn.addEventListener('click', async function() {
-        const userId = this.dataset.userId;
-        const materialId = this.dataset.materialId;
-        showLoading('Подтверждение задания...');
-        
-        try {
-          const userRef = ref(db, `users/${userId}`);
-          const userData = await get(userRef).then(snapshot => snapshot.val());
-          const task = userData.materials[materialId];
-          const rewardAmount = task.reward || 0;
-          
-          await update(userRef, {
-            [`materials/${materialId}/status`]: 'completed',
-            balance: (userData.balance || 0) + rewardAmount
-          });
-          
-          showNotification('Задание подтверждено!');
-          displayStats(uid);
-        } catch (error) {
-          showNotification('Ошибка при подтверждении', 'error');
-        } finally {
-          hideLoading();
-        }
-      });
-    });
-    
-    document.querySelectorAll('.reject-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const userId = this.dataset.userId;
-        const materialId = this.dataset.materialId;
-        
-        document.getElementById('rejection-modal').classList.remove('hidden');
-        
-        document.getElementById('rejection-cancel').addEventListener('click', () => {
-          document.getElementById('rejection-modal').classList.add('hidden');
-        }, { once: true });
-        
-        document.getElementById('rejection-confirm').addEventListener('click', async () => {
-          const reason = document.getElementById('rejection-reason').value;
-          if (!reason) {
-            showNotification('Укажите причину отклонения', 'error');
-            return;
-          }
-          
-          document.getElementById('rejection-modal').classList.add('hidden');
-          showLoading('Отклонение задания...');
-          
-          try {
-            await update(ref(db, `users/${userId}/materials/${materialId}`), {
-              status: 'not_completed',
-              rejectionReason: reason
-            });
-            
-            showNotification('Задание отклонено', 'error');
-            displayStats(uid);
-          } catch (error) {
-            showNotification('Ошибка при отклонении', 'error');
-          } finally {
-            hideLoading();
-          }
-        }, { once: true });
-      });
-    });
-  } else {
-    // Интерфейс обычного пользователя
-    if (!userData?.materials || Object.keys(userData.materials).length === 0) {
-      statsContainer.innerHTML = `
-        <div class="ios-card">
-          <p>У вас нет активных заданий</p>
-        </div>
-      `;
-      return;
-    }
-
-    const totalTasks = Object.keys(userData.materials).length;
-    const completedTasks = Object.values(userData.materials).filter(m => m.status === 'completed').length;
-    const pendingTasks = Object.values(userData.materials).filter(m => m.status === 'pending').length;
-    const rejectedTasks = Object.values(userData.materials).filter(m => m.status === 'not_completed').length;
-    const totalEarnings = Object.values(userData.materials).reduce((sum, m) => sum + (m.earnings || 0), 0);
-
-    statsContainer.innerHTML = `
-      <div class="stats-summary">
-        <div class="stat-card">
-          <h3>Всего заданий</h3>
-          <p>${totalTasks}</p>
-        </div>
-        <div class="stat-card">
-          <h3>Выполнено</h3>
-          <p>${completedTasks}</p>
-        </div>
-        <div class="stat-card">
-          <h3>На проверке</h3>
-          <p>${pendingTasks}</p>
-        </div>
-        <div class="stat-card">
-          <h3>Отклонено</h3>
-          <p>${rejectedTasks}</p>
-        </div>
-        <div class="stat-card">
-          <h3>Заработано</h3>
-          <p>${totalEarnings.toFixed(2)}₽</p>
-        </div>
-      </div>
-      <div class="tasks-list">
-        <h3>История заданий</h3>
-        ${Object.entries(userData.materials).map(([id, task]) => `
-          <div class="task-item">
-            <div class="task-info">
-              <h4>${task.title}</h4>
-              <p>Статус: 
-                ${task.status === 'completed' ? 
-                  '<span class="status-badge completed"><i class="fas fa-check-circle"></i> Выполнено</span>' : 
-                 task.status === 'pending' ? 
-                  '<span class="status-badge pending"><i class="fas fa-clock"></i> На проверке</span>' :
-                 task.status === 'not_completed' ? 
-                  '<span class="status-badge rejected"><i class="fas fa-times-circle"></i> Отклонено</span>' :
-                  '<span class="status-badge"><i class="fas fa-hourglass-half"></i> В процессе</span>'
-                }
-              </p>
-              <p>Принято: ${new Date(task.accepted).toLocaleDateString()}</p>
-              ${task.status === 'not_completed' && task.rejectionReason ? `
-                <div class="task-comment">
-                  <strong>Причина:</strong> ${task.rejectionReason}
-                </div>
-              ` : ''}
-            </div>
-          </div>
-        `).join('')}
+      <div class="ios-card">
+        <p>У вас нет активных заданий</p>
       </div>
     `;
+    return;
   }
+
+  const totalTasks = Object.keys(userData.materials).length;
+  const completedTasks = Object.values(userData.materials).filter(m => m.status === 'completed').length;
+  const pendingTasks = Object.values(userData.materials).filter(m => m.status === 'pending').length;
+  const rejectedTasks = Object.values(userData.materials).filter(m => m.status === 'rejected').length;
+  const totalEarnings = Object.values(userData.materials).reduce((sum, m) => sum + (m.earnings || 0), 0);
+
+  statsContainer.innerHTML = `
+    <div class="stats-summary">
+      <div class="stat-card">
+        <h3>Всего заданий</h3>
+        <p>${totalTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Выполнено</h3>
+        <p>${completedTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>На проверке</h3>
+        <p>${pendingTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Отклонено</h3>
+        <p>${rejectedTasks}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Заработано</h3>
+        <p>${totalEarnings.toFixed(2)}₽</p>
+      </div>
+    </div>
+    <div class="tasks-list">
+      <h3>История заданий</h3>
+      ${Object.entries(userData.materials).map(([id, task]) => `
+        <div class="task-item">
+          <div class="task-info">
+            <h4>${task.title}</h4>
+            <p>Статус: 
+              ${task.status === 'completed' ? 
+                '<span class="status-badge completed"><i class="fas fa-check-circle"></i> Выполнено</span>' : 
+               task.status === 'pending' ? 
+                '<span class="status-badge pending"><i class="fas fa-clock"></i> На проверке</span>' :
+               task.status === 'rejected' ? 
+                '<span class="status-badge rejected"><i class="fas fa-times-circle"></i> Отклонено</span>' :
+                '<span class="status-badge"><i class="fas fa-hourglass-half"></i> В процессе</span>'
+              }
+            </p>
+            <p>Принято: ${new Date(task.accepted).toLocaleDateString()}</p>
+            ${task.status === 'rejected' && task.rejectionReason ? `
+              <div class="task-comment">
+                <strong>Причина:</strong> ${task.rejectionReason}
+              </div>
+            ` : ''}
+            ${task.views ? `<p>Просмотров: ${task.views}</p>` : ''}
+            ${task.earnings ? `<p>Заработано: ${task.earnings}₽</p>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 // Загрузка раздела
@@ -576,13 +493,16 @@ async function loadSection(sectionId, uid) {
       document.getElementById('profile-name').textContent = userData.name;
       document.getElementById('profile-balance').textContent = `${userData.balance || 0} ₽`;
       document.getElementById('name-input').value = userData.name || '';
+      document.getElementById('tiktok-input').value = userData.tiktok || '';
+      document.getElementById('youtube-input').value = userData.youtube || '';
       
       // Аватар
       const avatarPreview = document.getElementById('avatar-preview');
-      if (auth.currentUser.photoURL) {
-        avatarPreview.src = auth.currentUser.photoURL;
+      if (userData.avatarUrl) {
+        avatarPreview.src = userData.avatarUrl;
       } else {
-        avatarPreview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'U')}&background=007AFF&color=fff`;
+        const initials = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+        avatarPreview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=007AFF&color=fff`;
       }
       
       // Подтверждение email
@@ -633,6 +553,44 @@ async function loadSection(sectionId, uid) {
         }
       });
       
+      // Сохранение TikTok
+      document.getElementById('save-tiktok').addEventListener('click', async () => {
+        const tiktok = document.getElementById('tiktok-input').value.trim();
+        if (!tiktok) {
+          showNotification('Введите TikTok username', 'error');
+          return;
+        }
+
+        showLoading('Сохранение...');
+        try {
+          await update(ref(db, `users/${uid}`), { tiktok });
+          showNotification('TikTok успешно сохранен');
+        } catch (error) {
+          showNotification('Ошибка при сохранении', 'error');
+        } finally {
+          hideLoading();
+        }
+      });
+      
+      // Сохранение YouTube
+      document.getElementById('save-youtube').addEventListener('click', async () => {
+        const youtube = document.getElementById('youtube-input').value.trim();
+        if (!youtube) {
+          showNotification('Введите YouTube ID канала', 'error');
+          return;
+        }
+
+        showLoading('Сохранение...');
+        try {
+          await update(ref(db, `users/${uid}`), { youtube });
+          showNotification('YouTube успешно сохранен');
+        } catch (error) {
+          showNotification('Ошибка при сохранении', 'error');
+        } finally {
+          hideLoading();
+        }
+      });
+      
       // Смена пароля
       document.getElementById('change-password-btn').addEventListener('click', () => {
         document.getElementById('change-password-modal').classList.remove('hidden');
@@ -678,7 +636,7 @@ async function loadSection(sectionId, uid) {
         }
       });
       
-      // Загрузка аватарки
+      // Загрузка аватарки (используем imgbb.com как бесплатный хост)
       document.getElementById('avatar-input').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -695,19 +653,28 @@ async function loadSection(sectionId, uid) {
         
         showLoading('Загрузка аватарки...');
         try {
-          // В реальном приложении здесь должна быть загрузка на сервер
-          // Для примера используем временную ссылку
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            const avatarUrl = e.target.result;
-            await updateProfile(auth.currentUser, { photoURL: avatarUrl });
+          const formData = new FormData();
+          formData.append('image', file);
+          
+          // Бесплатный API imgbb.com (замените API_KEY на свой)
+          const response = await fetch('https://api.imgbb.com/1/upload?key=1e56db850ecdc3cd2c8ac1e73dac0eb8', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            const avatarUrl = data.data.url;
+            await update(ref(db, `users/${uid}`), { avatarUrl });
             document.getElementById('avatar-preview').src = avatarUrl;
             showNotification('Аватар успешно обновлен');
-            hideLoading();
-          };
-          reader.readAsDataURL(file);
+          } else {
+            throw new Error('Ошибка загрузки изображения');
+          }
         } catch (error) {
+          console.error('Ошибка загрузки аватарки:', error);
           showNotification('Ошибка при загрузке аватарки', 'error');
+        } finally {
           hideLoading();
         }
       });
@@ -812,6 +779,8 @@ function initApp() {
       
       // Переключаем на вкладку входа после успешной регистрации
       document.getElementById('login-tab').click();
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = '';
     } catch (error) {
       let errorMessage = "Ошибка регистрации";
       switch(error.code) {
@@ -822,10 +791,7 @@ function initApp() {
           errorMessage = "Неверный формат email";
           break;
         case "auth/weak-password":
-          errorMessage = "Пароль должен содержать минимум 6 символов";
-          break;
-        case "auth/operation-not-allowed":
-          errorMessage = "Регистрация временно недоступна";
+          errorMessage = "Пароль слишком простой (минимум 6 символов)";
           break;
       }
       showNotification(errorMessage, 'error');
@@ -835,30 +801,44 @@ function initApp() {
       hideLoading();
     }
   });
-
-  // Обработчики для кнопок навигации
+  
+  // Обработчики для навигации
   tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const sectionId = btn.dataset.section;
-      const uid = auth.currentUser?.uid;
-      loadSection(sectionId, uid);
+    btn.addEventListener('click', function() {
+      if (!auth.currentUser) return;
+      loadSection(this.dataset.section, auth.currentUser.uid);
     });
   });
   
-  // Отслеживание состояния аутентификации
-  onAuthStateChanged(auth, (user) => {
+  // Проверка состояния авторизации
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
+      // Пользователь вошел в систему
       authScreen.classList.add('hidden');
       appScreen.classList.remove('hidden');
-      loadSection('main', user.uid);
       
-      // Проверяем верификацию email при каждом входе
-      if (!user.emailVerified) {
-        showNotification('Подтвердите ваш email для полного доступа', 'error');
+      // Проверяем, есть ли данные пользователя в базе
+      const userData = await loadUserData(user.uid);
+      if (!userData) {
+        // Создаем запись пользователя если ее нет
+        await set(ref(db, `users/${user.uid}`), {
+          ...userDataTemplate,
+          name: user.displayName || '',
+          email: user.email,
+          balance: 0
+        });
       }
+      
+      // Загружаем главный раздел
+      loadSection('main', user.uid);
     } else {
-      authScreen.classList.remove('hidden');
+      // Пользователь вышел
       appScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('signup-form').classList.add('hidden');
+      document.getElementById('login-tab').classList.add('active');
+      document.getElementById('signup-tab').classList.remove('active');
     }
   });
 }
