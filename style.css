@@ -15,10 +15,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: var(--ios-gray);
   color: var(--ios-dark);
   height: 100vh;
@@ -30,11 +30,12 @@ body {
   display: none !important;
 }
 
+/* Notification */
 .notification {
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 12px 20px;
+  padding: 15px 20px;
   border-radius: 10px;
   color: white;
   z-index: 1000;
@@ -63,6 +64,7 @@ body {
   align-items: center;
   height: 100vh;
   padding: 20px;
+  background-color: var(--ios-gray);
 }
 
 .auth-container {
@@ -83,24 +85,32 @@ body {
   font-size: 24px;
   font-weight: bold;
   color: var(--ios-blue);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .logo-container p {
   color: var(--ios-light-text);
-  font-size: 14px;
 }
 
-.auth-switch {
+.auth-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--ios-separator);
+}
+
+.auth-tab {
+  flex: 1;
   text-align: center;
-  margin-top: 15px;
+  padding: 10px;
+  cursor: pointer;
   color: var(--ios-light-text);
-  font-size: 14px;
+  transition: all 0.2s;
 }
 
-.auth-switch span {
+.auth-tab.active {
+  border-bottom: 2px solid var(--ios-blue);
   color: var(--ios-blue);
-  cursor: pointer;
+  font-weight: 500;
 }
 
 .input-group {
@@ -118,11 +128,12 @@ body {
 
 .input-group input {
   width: 100%;
-  padding: 12px 15px 12px 45px;
+  padding: 15px 15px 15px 45px;
   border: 1px solid var(--ios-separator);
   border-radius: 10px;
   font-size: 16px;
   background: var(--ios-card);
+  transition: border-color 0.2s;
 }
 
 .input-group input:focus {
@@ -132,24 +143,45 @@ body {
 
 .ios-button {
   width: 100%;
-  padding: 14px;
+  padding: 15px;
   border: none;
   border-radius: 10px;
   background: var(--ios-blue);
   color: white;
   font-size: 16px;
   font-weight: 500;
-  margin-top: 5px;
+  margin-top: 10px;
   cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
 }
 
-.ios-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.ios-button:hover {
+  opacity: 0.9;
+}
+
+.ios-button.small {
+  padding: 8px 12px;
+  font-size: 14px;
+  width: auto;
 }
 
 .ios-button.danger {
   background: var(--ios-red);
+  margin-top: 30px;
+}
+
+.ios-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-text, .btn-loader {
+  display: inline-block;
+}
+
+.btn-loader {
+  margin-left: 8px;
 }
 
 /* App Screen */
@@ -162,19 +194,21 @@ body {
 .content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 70px;
+  padding-bottom: 80px;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Tab Bar */
+/* iOS Tab Bar */
 .ios-tabbar {
-  display: flex;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  display: flex;
   background: var(--ios-card);
   border-top: 1px solid var(--ios-separator);
-  padding: 8px 0;
+  padding: 10px 0;
+  z-index: 100;
 }
 
 .tab-btn {
@@ -188,6 +222,7 @@ body {
   font-size: 12px;
   padding: 5px 0;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .tab-btn.active {
@@ -205,9 +240,10 @@ body {
 }
 
 .ios-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   margin-bottom: 20px;
+  padding-top: 10px;
 }
 
 .ios-card {
@@ -216,6 +252,92 @@ body {
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.card-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  height: 150px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.benefits-list {
+  margin-top: 10px;
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.benefits-list li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.benefits-list i {
+  color: var(--ios-blue);
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Profile */
+.profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  padding-top: 10px;
+}
+
+.avatar {
+  font-size: 60px;
+  color: var(--ios-blue);
+  margin-bottom: 10px;
+}
+
+.balance {
+  font-size: 20px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.balance strong {
+  color: var(--ios-blue);
+}
+
+.profile-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.profile-input:focus {
+  outline: none;
+  border-color: var(--ios-blue);
+}
+
+.logout-btn-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--ios-light-text);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px;
+  transition: color 0.2s;
+}
+
+.logout-btn-top:hover {
+  color: var(--ios-red);
 }
 
 /* Materials */
@@ -236,6 +358,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s;
 }
 
 .filter-btn.active {
@@ -256,8 +379,59 @@ body {
   color: var(--ios-blue);
 }
 
+.material-item {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.material-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.material-badge.tiktok {
+  background-color: var(--tiktok-pink);
+}
+
+.material-badge.youtube {
+  background-color: var(--youtube-red);
+}
+
+.material-badge.other {
+  background-color: var(--ios-blue);
+}
+
 .material-item h3 {
   margin-bottom: 8px;
+  color: var(--ios-dark);
+  padding-right: 40px;
+}
+
+.material-item p {
+  margin-bottom: 8px;
+  color: var(--ios-light-text);
+}
+
+.material-item strong {
+  color: var(--ios-blue);
+}
+
+.material-link {
+  color: var(--ios-blue);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.material-link:hover {
+  text-decoration: underline;
 }
 
 .material-actions {
@@ -266,109 +440,60 @@ body {
   margin-top: 12px;
 }
 
-.take-btn, .in-progress-btn, .completed-btn {
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  border: none;
-  color: white;
-}
-
 .take-btn {
   background-color: var(--ios-blue);
-}
-
-.in-progress-btn {
-  background: var(--ios-light-text);
-  cursor: default;
-}
-
-.completed-btn {
-  background: var(--ios-green);
-  cursor: default;
-}
-
-/* Moderation */
-.moderator-comment {
-  background-color: #FFF0F0;
-  border-left: 3px solid var(--ios-red);
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 0 8px 8px 0;
-  font-size: 14px;
-}
-
-.rejected-status {
-  color: var(--ios-red);
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.resubmit-btn {
-  background-color: var(--ios-red) !important;
-  margin-top: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
   color: white;
-  border: none;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
-.platform-warning {
-  color: var(--ios-red);
-  font-size: 14px;
-  margin-top: 8px;
-  display: none;
-}
-
-/* Profile */
-.profile-header {
+/* Stats */
+.stats-placeholder {
   text-align: center;
+  padding: 40px 0;
+  color: var(--ios-light-text);
+}
+
+.stats-placeholder i {
+  font-size: 50px;
   margin-bottom: 20px;
-}
-
-.avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 10px;
-  background-color: #f0f0f0;
-}
-
-.balance {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
-.balance strong {
   color: var(--ios-blue);
 }
 
-.profile-input {
-  width: 100%;
-  padding: 10px 15px;
-  border: 1px solid var(--ios-separator);
-  border-radius: 8px;
-  margin: 8px 0;
+.stats-placeholder p {
+  font-size: 16px;
 }
 
-#logout-btn {
-  margin-top: 20px;
+/* Animation for loading spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Responsive */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments */
 @media (max-width: 480px) {
   .auth-container {
     padding: 20px;
   }
   
   .ios-title {
-    font-size: 22px;
+    font-size: 24px;
   }
   
-  .tab-btn i {
-    font-size: 20px;
+  .card-image {
+    height: 120px;
+  }
+  
+  .profile-header {
+    padding-top: 5px;
+  }
+  
+  .logout-btn-top {
+    font-size: 18px;
+    padding: 5px;
   }
 }
