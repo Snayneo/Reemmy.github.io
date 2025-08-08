@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reemmy</title>
+  <title>Reemmy - Заработок в TikTok и YouTube</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="ios-style">
-  <!-- Notification -->
   <div id="notification" class="notification hidden"></div>
 
   <!-- Auth Screen -->
@@ -16,7 +15,7 @@
     <div class="auth-container">
       <div class="logo-container">
         <div class="logo-text">Reemmy</div>
-        <p>Зарабатывайте на рекламе</p>
+        <p>Зарабатывайте на рекламе в соцсетях</p>
       </div>
       
       <div class="auth-tabs">
@@ -63,10 +62,10 @@
   <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
     <div class="content" id="dynamic-content">
-      <!-- Content will be loaded dynamically -->
+      <!-- Content loaded dynamically -->
     </div>
 
-    <!-- iOS Style Tab Bar -->
+    <!-- Tab Bar -->
     <nav class="ios-tabbar">
       <button class="tab-btn active" data-section="main">
         <i class="fas fa-home"></i>
@@ -87,7 +86,7 @@
     </nav>
   </div>
 
-  <!-- Модальные окна -->
+  <!-- Modals -->
   <div id="logout-modal" class="modal hidden">
     <div class="modal-content">
       <h3>Подтверждение выхода</h3>
@@ -113,17 +112,6 @@
       <div class="modal-actions">
         <button id="password-cancel" class="ios-button small">Отмена</button>
         <button id="password-confirm" class="ios-button small">Сохранить</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="rejection-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Причина отклонения</h3>
-      <textarea id="rejection-reason" placeholder="Укажите причину отклонения задания..." rows="3"></textarea>
-      <div class="modal-actions">
-        <button id="rejection-cancel" class="ios-button small">Отмена</button>
-        <button id="rejection-confirm" class="ios-button small danger">Подтвердить</button>
       </div>
     </div>
   </div>
