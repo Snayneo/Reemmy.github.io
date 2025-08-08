@@ -1,109 +1,75 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reemmy — заработок на рекламе</title>
-
-  <!-- FontAwesome -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reemmy</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
-
 </head>
 <body class="ios-style">
-
-  <!-- Notification -->
   <div id="notification" class="notification hidden"></div>
 
-  <!-- AUTH SCREEN -->
-  <div id="auth-screen" class="screen">
-    <div class="auth-wrapper">
-      <div class="brand">
-        <div class="logo">Reemmy</div>
-        <p class="tagline">Зарабатывайте на рекламе в своих соцсетях</p>
+  <!-- Auth Screen -->
+  <div id="auth-screen">
+    <div class="auth-container">
+      <div class="logo-container">
+        <div class="logo-text">Reemmy</div>
+        <p>Зарабатывайте на рекламе</p>
       </div>
-
-      <div class="auth-tabs">
-        <button id="login-tab" class="auth-tab active">Вход</button>
-        <button id="signup-tab" class="auth-tab">Регистрация</button>
-      </div>
-
-      <!-- LOGIN -->
-      <form id="login-form" class="auth-form">
-        <div class="field">
+      
+      <form id="login-form">
+        <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input id="login-email" type="email" placeholder="Email" required />
+          <input type="email" id="login-email" placeholder="Email" required>
         </div>
-        <div class="field">
+        <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input id="login-password" type="password" placeholder="Пароль" required />
-          <button type="button" id="show-login-password" class="icon-btn"><i class="fas fa-eye"></i></button>
+          <input type="password" id="login-password" placeholder="Пароль" required>
         </div>
-
-        <button id="login-btn" class="btn ios-button" type="submit">
-          <span class="btn-text">Войти</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
-
-        <div class="auth-bottom">
-          <a href="#" id="forgot-password">Забыли пароль?</a>
-        </div>
+        <button type="submit" class="ios-button">Войти</button>
       </form>
-
-      <!-- SIGNUP -->
-      <form id="signup-form" class="auth-form hidden">
-        <div class="field">
+      
+      <form id="signup-form" class="hidden">
+        <div class="input-group">
           <i class="fas fa-user"></i>
-          <input id="signup-name" type="text" placeholder="Ваше имя" required />
+          <input type="text" id="signup-name" placeholder="Ваше имя" required>
         </div>
-        <div class="field">
+        <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input id="signup-email" type="email" placeholder="Email" required />
+          <input type="email" id="signup-email" placeholder="Email" required>
         </div>
-        <div class="field">
+        <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input id="signup-password" type="password" placeholder="Пароль (мин. 6 символов)" minlength="6" required />
-          <button type="button" id="show-signup-password" class="icon-btn"><i class="fas fa-eye"></i></button>
+          <input type="password" id="signup-password" placeholder="Пароль" required>
         </div>
-
-        <button id="signup-btn" class="btn ios-button" type="submit">
-          <span class="btn-text">Зарегистрироваться</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
+        <button type="submit" class="ios-button">Зарегистрироваться</button>
       </form>
+      <p class="auth-switch">Нет аккаунта? <span id="show-signup">Зарегистрироваться</span></p>
+      <p class="auth-switch hidden">Уже есть аккаунт? <span id="show-login">Войти</span></p>
     </div>
   </div>
 
-  <!-- APP SCREEN -->
+  <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
-    <header class="app-header">
-      <div class="left">
-        <button id="menu-toggle" class="icon-btn"><i class="fas fa-bars"></i></button>
-        <div class="app-title">Reemmy</div>
-      </div>
-      <div class="right">
-        <div id="header-balance" class="header-balance">Баланс: 0₽</div>
-        <button id="header-avatar-btn" class="avatar-btn" title="Профиль">
-          <img id="header-avatar" class="avatar-img" src="" alt="avatar" />
-        </button>
-      </div>
-    </header>
-
-    <main class="content" id="dynamic-content">
-      <!-- dynamic -->
-    </main>
+    <div class="content" id="dynamic-content"></div>
 
     <nav class="ios-tabbar">
-      <button class="tab-btn active" data-section="main"><i class="fas fa-home"></i><span>Главная</span></button>
-      <button class="tab-btn" data-section="materials"><i class="fas fa-ad"></i><span>Задания</span></button>
-      <button class="tab-btn" data-section="stats"><i class="fas fa-chart-line"></i><span>Статистика</span></button>
-      <button class="tab-btn" data-section="profile"><i class="fas fa-user"></i><span>Профиль</span></button>
+      <button class="tab-btn active" data-section="main">
+        <i class="fas fa-home"></i>
+        <span>Главная</span>
+      </button>
+      <button class="tab-btn" data-section="materials">
+        <i class="fas fa-ad"></i>
+        <span>Задания</span>
+      </button>
+      <button class="tab-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
     </nav>
   </div>
 
-  <!-- Firebase and app scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
