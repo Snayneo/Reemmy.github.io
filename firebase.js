@@ -1,10 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
   getAuth, 
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  sendEmailVerification,
+  updatePassword,
+  updateProfile,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
   getDatabase, 
@@ -24,7 +29,6 @@ const firebaseConfig = {
   storageBucket: "reemmy-gfbgbf6rt36t1.firebasestorage.app",
   messagingSenderId: "242756333689",
   appId: "1:242756333689:web:21ec982f873f09492de4a8",
-  measurementId: "G-62KWPB066X"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -43,5 +47,10 @@ export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  sendEmailVerification,
+  updatePassword,
+  updateProfile,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 };
