@@ -32,17 +32,11 @@
         <div class="input-group">
           <i class="fas fa-lock"></i>
           <input type="password" id="login-password" placeholder="Пароль" required>
-          <button type="button" class="show-password" id="show-login-password">
-            <i class="fas fa-eye"></i>
-          </button>
         </div>
         <button type="submit" class="ios-button" id="login-btn">
           <span class="btn-text">Войти</span>
           <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
-        <div class="auth-footer">
-          <a href="#" id="forgot-password">Забыли пароль?</a>
-        </div>
       </form>
       
       <form id="signup-form" class="hidden">
@@ -57,9 +51,6 @@
         <div class="input-group">
           <i class="fas fa-lock"></i>
           <input type="password" id="signup-password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
-          <button type="button" class="show-password" id="show-signup-password">
-            <i class="fas fa-eye"></i>
-          </button>
         </div>
         <button type="submit" class="ios-button" id="signup-btn">
           <span class="btn-text">Зарегистрироваться</span>
@@ -94,6 +85,47 @@
         <span>Профиль</span>
       </button>
     </nav>
+  </div>
+
+  <!-- Модальные окна -->
+  <div id="logout-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Подтверждение выхода</h3>
+      <p>Вы точно хотите выйти из аккаунта?</p>
+      <div class="modal-actions">
+        <button id="logout-cancel" class="ios-button small">Отмена</button>
+        <button id="logout-confirm" class="ios-button small danger">Выйти</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="change-password-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Смена пароля</h3>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="current-password" placeholder="Текущий пароль">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="new-password" placeholder="Новый пароль">
+      </div>
+      <div class="modal-actions">
+        <button id="password-cancel" class="ios-button small">Отмена</button>
+        <button id="password-confirm" class="ios-button small">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="rejection-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Причина отклонения</h3>
+      <textarea id="rejection-reason" placeholder="Укажите причину отклонения задания..." rows="3"></textarea>
+      <div class="modal-actions">
+        <button id="rejection-cancel" class="ios-button small">Отмена</button>
+        <button id="rejection-confirm" class="ios-button small danger">Подтвердить</button>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
