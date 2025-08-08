@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reemmy App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Контентные страницы -->
+        <div id="home-page" class="page active">
+            <h1>Главная</h1>
+            <div class="materials-list" id="materials-list"></div>
+        </div>
+        
+        <div id="materials-page" class="page">
+            <h1>Материалы</h1>
+            <div class="materials-list" id="all-materials-list"></div>
+        </div>
+        
+        <div id="stats-page" class="page">
+            <h1>Статистика</h1>
+            <div class="stats-container" id="stats-container"></div>
+        </div>
+        
+        <div id="profile-page" class="page">
+            <h1>Профиль</h1>
+            <div class="profile-container" id="profile-container">
+                <div class="auth-forms" id="auth-forms">
+                    <div class="form-container">
+                        <h2>Регистрация</h2>
+                        <input type="text" id="reg-name" placeholder="Имя">
+                        <input type="email" id="reg-email" placeholder="Email">
+                        <input type="password" id="reg-password" placeholder="Пароль">
+                        <button id="register-btn">Зарегистрироваться</button>
+                    </div>
+                    
+                    <div class="form-container">
+                        <h2>Вход</h2>
+                        <input type="email" id="login-email" placeholder="Email">
+                        <input type="password" id="login-password" placeholder="Пароль">
+                        <button id="login-btn">Войти</button>
+                    </div>
+                </div>
+                
+                <div class="profile-info" id="profile-info" style="display: none;">
+                    <div class="avatar-container">
+                        <img id="user-avatar" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Аватар">
+                        <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                        <button id="change-avatar-btn">Изменить аватар</button>
+                    </div>
+                    <h2 id="user-name"></h2>
+                    <p id="user-email"></p>
+                    <div class="balance">
+                        <span>Баланс:</span>
+                        <span id="user-balance">0</span> $
+                    </div>
+                    <button id="logout-btn">Выйти</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Нижнее меню -->
+        <div class="tab-bar">
+            <div class="tab-item active" data-page="home-page">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </div>
+            <div class="tab-item" data-page="materials-page">
+                <i class="fas fa-file-alt"></i>
+                <span>Материалы</span>
+            </div>
+            <div class="tab-item" data-page="stats-page">
+                <i class="fas fa-chart-bar"></i>
+                <span>Статистика</span>
+            </div>
+            <div class="tab-item" data-page="profile-page">
+                <i class="fas fa-user"></i>
+                <span>Профиль</span>
+            </div>
+        </div>
+    </div>
 
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
