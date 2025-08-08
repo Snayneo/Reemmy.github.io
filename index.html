@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reemmy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="ios-style">
-  <!-- Notification -->
+<body>
   <div id="notification" class="notification hidden"></div>
 
   <!-- Auth Screen -->
   <div id="auth-screen">
     <div class="auth-container">
-      <div class="logo-container">
-        <div class="logo-text">Reemmy</div>
-        <p>Зарабатывайте на рекламе</p>
-      </div>
-      
-      <div class="auth-tabs">
-        <div class="auth-tab active" id="login-tab">Вход</div>
-        <div class="auth-tab" id="signup-tab">Регистрация</div>
-      </div>
-      
+      <h1 class="logo-text">Reemmy</h1>
+      <p class="subtitle">Зарабатывай на соцсетях</p>
+
       <form id="login-form">
         <div class="input-group">
           <i class="fas fa-envelope"></i>
@@ -35,11 +27,11 @@
         </div>
         <button type="submit" class="ios-button">Войти</button>
       </form>
-      
+
       <form id="signup-form" class="hidden">
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input type="text" id="signup-name" placeholder="Ваше имя" required>
+          <input type="text" id="signup-name" placeholder="Имя" required>
         </div>
         <div class="input-group">
           <i class="fas fa-envelope"></i>
@@ -51,37 +43,21 @@
         </div>
         <button type="submit" class="ios-button">Зарегистрироваться</button>
       </form>
+
+      <p class="auth-switch" id="switch-to-signup">Нет аккаунта? <span>Регистрация</span></p>
+      <p class="auth-switch hidden" id="switch-to-login">Уже есть аккаунт? <span>Войти</span></p>
     </div>
   </div>
 
   <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
-    <div class="content" id="dynamic-content">
-      <!-- Content will be loaded dynamically -->
-    </div>
-
-    <!-- iOS Style Tab Bar -->
+    <div class="content" id="content"></div>
     <nav class="ios-tabbar">
-      <button class="tab-btn active" data-section="main">
-        <i class="fas fa-home"></i>
-        <span>Главная</span>
-      </button>
-      <button class="tab-btn" data-section="materials">
-        <i class="fas fa-ad"></i>
-        <span>Задания</span>
-      </button>
-      <button class="tab-btn" data-section="stats">
-        <i class="fas fa-chart-line"></i>
-        <span>Статистика</span>
-      </button>
-      <button class="tab-btn" data-section="profile">
-        <i class="fas fa-user"></i>
-        <span>Профиль</span>
-      </button>
+      <button class="tab-btn active" data-section="main"><i class="fas fa-home"></i><span>Главная</span></button>
+      <button class="tab-btn" data-section="tasks"><i class="fas fa-bullhorn"></i><span>Задания</span></button>
+      <button class="tab-btn" data-section="profile"><i class="fas fa-user"></i><span>Профиль</span></button>
     </nav>
   </div>
-
-  <script type="module" src="firebase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
