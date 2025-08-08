@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="ios-style">
-  <!-- Notification -->
   <div id="notification" class="notification hidden"></div>
 
   <!-- Auth Screen -->
@@ -17,11 +16,6 @@
       <div class="logo-container">
         <div class="logo-text">Reemmy</div>
         <p>Зарабатывайте на рекламе</p>
-      </div>
-      
-      <div class="auth-tabs">
-        <div class="auth-tab active" id="login-tab">Вход</div>
-        <div class="auth-tab" id="signup-tab">Регистрация</div>
       </div>
       
       <form id="login-form">
@@ -56,11 +50,8 @@
 
   <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
-    <div class="content" id="dynamic-content">
-      <!-- Content will be loaded dynamically -->
-    </div>
+    <div class="content" id="dynamic-content"></div>
 
-    <!-- iOS Style Tab Bar -->
     <nav class="ios-tabbar">
       <button class="tab-btn active" data-section="main">
         <i class="fas fa-home"></i>
@@ -69,10 +60,6 @@
       <button class="tab-btn" data-section="materials">
         <i class="fas fa-ad"></i>
         <span>Задания</span>
-      </button>
-      <button class="tab-btn" data-section="stats">
-        <i class="fas fa-chart-line"></i>
-        <span>Статистика</span>
       </button>
       <button class="tab-btn" data-section="profile">
         <i class="fas fa-user"></i>
