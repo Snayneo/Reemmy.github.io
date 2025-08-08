@@ -1,97 +1,87 @@
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reemmy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="ios-style">
-
-  <!-- Уведомления -->
   <!-- Notification -->
   <div id="notification" class="notification hidden"></div>
 
-  <!-- Экран авторизации -->
   <!-- Auth Screen -->
   <div id="auth-screen">
     <div class="auth-container">
       <div class="logo-container">
-@@ -34,10 +33,7 @@
-          <i class="fas fa-lock"></i>
-          <input type="password" id="login-password" placeholder="Пароль" required>
-        </div>
-        <button type="submit" class="ios-button" id="login-btn">
-          <span class="btn-text">Войти</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
-        <button type="submit" class="ios-button">Войти</button>
-      </form>
-
-      <form id="signup-form" class="hidden">
-@@ -51,23 +47,20 @@
+        <div class="logo-text">Reemmy</div>
+        <p>Зарабатывайте на рекламе</p>
+      </div>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="login-tab">Вход</div>
+        <div class="auth-tab" id="signup-tab">Регистрация</div>
+      </div>
+      
+      <form id="login-form">
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="login-email" placeholder="Email" required>
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="signup-password" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+          <input type="password" id="login-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="ios-button">Войти</button>
+      </form>
+      
+      <form id="signup-form" class="hidden">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="signup-name" placeholder="Ваше имя" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signup-email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
           <input type="password" id="signup-password" placeholder="Пароль" required>
         </div>
-        <button type="submit" class="ios-button" id="signup-btn">
-          <span class="btn-text">Зарегистрироваться</span>
-          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
         <button type="submit" class="ios-button">Зарегистрироваться</button>
       </form>
     </div>
   </div>
 
-  <!-- Основной экран приложения -->
   <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
     <div class="content" id="dynamic-content">
-      <!-- Секции подгружаются через app.js -->
       <!-- Content will be loaded dynamically -->
     </div>
 
-    <!-- iOS Tab Bar -->
     <!-- iOS Style Tab Bar -->
     <nav class="ios-tabbar">
       <button class="tab-btn active" data-section="main">
         <i class="fas fa-home"></i>
-@@ -88,32 +81,18 @@
+        <span>Главная</span>
+      </button>
+      <button class="tab-btn" data-section="materials">
+        <i class="fas fa-ad"></i>
+        <span>Задания</span>
+      </button>
+      <button class="tab-btn" data-section="stats">
+        <i class="fas fa-chart-line"></i>
+        <span>Статистика</span>
+      </button>
+      <button class="tab-btn" data-section="profile">
+        <i class="fas fa-user"></i>
+        <span>Профиль</span>
+      </button>
     </nav>
   </div>
 
-  <!-- Модалки -->
-  <div id="logout-modal" class="modal hidden">
-  <!-- Modal for comments -->
-  <div id="comment-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Выйти из аккаунта?</h3>
-      <div class="modal-actions">
-        <button id="logout-cancel" class="ios-button small">Отмена</button>
-        <button id="logout-confirm" class="ios-button small danger">Выйти</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="change-password-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Смена пароля</h3>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="current-password" placeholder="Текущий пароль">
-      </div>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="new-password" placeholder="Новый пароль">
-      </div>
-      <div class="modal-actions">
-        <button id="password-cancel" class="ios-button small">Отмена</button>
-        <button id="password-confirm" class="ios-button small">Сохранить</button>
-      </div>
-      <span class="close-modal">&times;</span>
-      <h3>Отправка на рассмотрение</h3>
-      <textarea id="comment-text" placeholder="Оставьте комментарий (ссылку на пост и т.д.)"></textarea>
-      <input type="file" id="screenshot-upload" accept="image/*" class="hidden">
-      <label for="screenshot-upload" class="ios-button small">
-        <i class="fas fa-image"></i> Прикрепить скриншот
-      </label>
-      <div id="screenshot-preview" class="hidden"></div>
-      <button id="submit-review" class="ios-button">Отправить на проверку</button>
-    </div>
-  </div>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
