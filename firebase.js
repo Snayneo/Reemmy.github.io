@@ -26,9 +26,9 @@ const firebaseConfig = {
   authDomain: "reemmy-gfbgbf6rt36t1.firebaseapp.com",
   databaseURL: "https://reemmy-gfbgbf6rt36t1-default-rtdb.firebaseio.com",
   projectId: "reemmy-gfbgbf6rt36t1",
-  storageBucket: "reemmy-gfbgbf6rt36t1.appspot.com",
+  storageBucket: "reemmy-gfbgbf6rt36t1.firebasestorage.app",
   messagingSenderId: "242756333689",
-  appId: "1:242756333689:web:21ec982f873f09492de4a8"
+  appId: "1:242756333689:web:21ec982f873f09492de4a8",
 };
 
 const app = initializeApp(firebaseConfig);
