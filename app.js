@@ -7,57 +7,128 @@ import {
   update,
   push,
   child,
-  remove,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut,
-  updateProfile
+  signOut
 } from './firebase.js';
 
 // DOM элементы
 const authScreen = document.getElementById('auth-screen');
 const appScreen = document.getElementById('app-screen');
 const dynamicContent = document.getElementById('dynamic-content');
+const tabButtons = document.querySelectorAll('.tab-btn');
 const loginForm = document.getElementById('login-form');
 const signupForm = document.getElementById('signup-form');
 const notification = document.getElementById('notification');
-const showSignup = document.getElementById('show-signup');
-const showLogin = document.getElementById('show-login');
 
-// Инициализация приложения
-function initApp() {
-  // Переключение между формами входа/регистрации
-  showSignup.addEventListener('click', () => {
-    loginForm.classList.add('hidden');
-    signupForm.classList.remove('hidden');
-    showSignup.parentElement.classList.add('hidden');
-    showLogin.parentElement.classList.remove('hidden');
-  });
+// Структура данных пользователя
+const userDataTemplate = {
+  name: "",
+  email: "",
+  tiktok: "",
+  youtube: "",
+  balance: 0,
+  rewards: {},
+  materials: {}
+};
 
-  showLogin.addEventListener('click', () => {
-    signupForm.classList.add('hidden');
-    loginForm.classList.remove('hidden');
-    showLogin.parentElement.classList.add('hidden');
-    showSignup.parentElement.classList.remove('hidden');
-  });
-
-  // Обработчики форм
-  loginForm.addEventListener('submit', handleLogin);
-  signupForm.addEventListener('submit', handleSignup);
-
-  // Проверка состояния аутентификации
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      authScreen.classList.add('hidden');
-      appScreen.classList.remove('hidden');
-      loadSection('main');
-    } else {
-      authScreen.classList.remove('hidden');
-      appScreen.classList.add('hidden');
-    }
-  });
-}
+// Шаблоны контента
+const sections = {
+  main: `
+    <div class="ios-section">
+      <h2 class="ios-title">Главная</h2>
+      <div class="ios-card news-card">
+        <img src="https://source.unsplash.com/random/600x300/?social,media" alt="Reemmy" class="card-image">
+        <h3>Reemmy - зарабатывать легко!</h3>
+        <p>Начните зарабатывать уже сегодня, размещая рекламу в своих соцсетях</p>
+      </div>
+      <div class="ios-card">
+        <img src="https://source.unsplash.com/random/600x300/?money,earn" alt="Заработок" class="card-image">
+        <h3><i class="fas fa-question-circle"></i> Почему мы?</h3>
+        <p>Мы платим за каждые 1000 просмотров вашего видео с нашей рекламой</p>
+        <ul class="benefits-list">
+          <li><i class="fas fa-check-circle"></i> Высокие ставки</li>
+          <li><i class="fas fa-check-circle"></i> Быстрые выплаты</li>
+          <li><i class="fas fa-check-circle"></i> Поддержка 24/7</li>
+        </ul>
+      </div>
+      <div class="ios-card">
+        <img src="https://source.unsplash.com/random/600x300/?support,help" alt="Поддержка" class="card-image">
+        <h3><i class="fas fa-headset"></i> Поддержка</h3>
+        <p>Email: support@reemmy.ru</p>
+        <p>Телефон: +7 (123) 456-78-90</p>
+        <p>Telegram: @reemmy_support</p>
+      </div>
+    </div>
+  `,
+  
+  materials: `
+    <div class="ios-section">
+      <h2 class="ios-title">Доступные задания</h2>
+      <div class="materials-filters">
+        <button class="filter-btn active" data-platform="all">Все</button>
+        <button class="filter-btn" data-platform="tiktok">TikTok</button>
+        <button class="filter-btn" data-platform="youtube">YouTube</button>
+      </div>
+      <div class="materials-list" id="materials-list">
+        <div class="loading-placeholder">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Загрузка заданий...</p>
+        </div>
+      </div>
+    </div>
+  `,
+  
+  stats: `
+    <div class="ios-section">
+      <h2 class="ios-title">Статистика</h2>
+      <div class="stats-placeholder">
+        <i class="fas fa-chart-line"></i>
+        <p>Скоро здесь появится ваша статистика</p>
+      </div>
+    </div>
+  `,
+  
+  profile: `
+    <div class="ios-section">
+      <div class="profile-header">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <h2 id="profile-name">Загрузка...</h2>
+        <div class="balance">
+          <span>Баланс:</span>
+          <strong id="profile-balance">0 ₽</strong>
+        </div>
+        <button class="logout-btn-top" id="logout-btn-top">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+      <div class="ios-card">
+        <h3><i class="fab fa-tiktok"></i> TikTok</h3>
+        <p id="profile-tiktok">Не указан</p>
+        <input type="text" id="tiktok-input" placeholder="@username" class="profile-input">
+        <button class="ios-button small" id="save-tiktok">
+          <span class="btn-text">Сохранить</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+      </div>
+      <div class="ios-card">
+        <h3><i class="fab fa-youtube"></i> YouTube</h3>
+        <p id="profile-youtube">Не указан</p>
+        <input type="text" id="youtube-input" placeholder="ID канала" class="profile-input">
+        <button class="ios-button small" id="save-youtube">
+          <span class="btn-text">Сохранить</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+      </div>
+      <button class="ios-button danger" id="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Выйти из аккаунта
+      </button>
+    </div>
+  `
+};
 
 // Показать уведомление
 function showNotification(message, type = 'success') {
@@ -76,7 +147,12 @@ async function loadUserData(uid) {
   return snapshot.exists() ? snapshot.val() : null;
 }
 
-// Загрузка материалов
+// Сохранение данных пользователя
+async function saveUserData(uid, data) {
+  await update(ref(db, `users/${uid}`), data);
+}
+
+// Загрузка материалов из Firebase
 async function loadMaterials() {
   try {
     const snapshot = await get(ref(db, 'Materials'));
@@ -88,310 +164,286 @@ async function loadMaterials() {
   }
 }
 
-// Проверить привязку соцсетей
-function checkSocialLinks(userData, platform) {
-  if (platform === 'tiktok') return !!userData.tiktok;
-  if (platform === 'youtube') return !!userData.youtube;
-  return true;
-}
-
-// Отображение материалов
+// Отображение материалов с фильтрацией
 async function displayMaterials(filterPlatform = 'all') {
   const materialsList = document.getElementById('materials-list');
-  materialsList.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-spin"></i><p>Загрузка заданий...</p></div>`;
+  materialsList.innerHTML = `
+    <div class="loading-placeholder">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Загрузка заданий...</p>
+    </div>
+  `;
 
   const materials = await loadMaterials();
-  const uid = auth.currentUser?.uid;
-  const userData = uid ? await loadUserData(uid) : null;
   
   if (!materials) {
-    materialsList.innerHTML = `<div class="ios-card"><p>Ошибка загрузки заданий</p></div>`;
+    materialsList.innerHTML = `
+      <div class="ios-card">
+        <p>Ошибка загрузки заданий. Попробуйте позже.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (Object.keys(materials).length === 0) {
+    materialsList.innerHTML = `
+      <div class="ios-card">
+        <p>Нет доступных заданий</p>
+      </div>
+    `;
     return;
   }
 
   let filteredMaterials = Object.entries(materials);
+  
   if (filterPlatform !== 'all') {
     filteredMaterials = filteredMaterials.filter(([_, material]) => 
       material.platform === filterPlatform
     );
   }
 
-  materialsList.innerHTML = filteredMaterials.map(([id, material]) => {
-    const userMaterial = userData?.materials?.[id];
-    const isCompleted = userMaterial?.status === 'completed';
-    const isRejected = userMaterial?.status === 'rejected';
-    const isInProgress = userMaterial?.status === 'in_progress';
-    const hasSocialLink = checkSocialLinks(userData, material.platform);
-
-    return `
-    <div class="ios-card material-item" data-id="${id}">
-      <h3>${material.title}</h3>
-      <p>${material.description}</p>
-      <p><strong>Платформа:</strong> ${material.platform === 'tiktok' ? 'TikTok' : 'YouTube'}</p>
-      <p><strong>Вознаграждение:</strong> ${material.reward}₽ за 1к просмотров</p>
-      
-      ${isRejected ? `
-        <div class="moderator-comment">
-          <p class="rejected-status">Отклонено</p>
-          <p>${userMaterial.moderatorComment || 'Причина не указана'}</p>
-          <button class="resubmit-btn" data-id="${id}">
-            Отправить повторно
-          </button>
-        </div>
-      ` : ''}
-      
-      <div class="material-actions">
-        ${isCompleted ? `
-          <button class="completed-btn" disabled>
-            <i class="fas fa-check-circle"></i> Выполнено
-          </button>
-        ` : isInProgress ? `
-          <button class="in-progress-btn" disabled>
-            <i class="fas fa-hourglass-half"></i> В процессе
-          </button>
-        ` : `
-          <button class="take-btn" data-id="${id}" ${!hasSocialLink ? 'disabled' : ''}>
-            Принять задание
-          </button>
-          ${!hasSocialLink ? `
-            <p class="platform-warning">
-              Для принятия задания привяжите ${material.platform === 'tiktok' ? 'TikTok' : 'YouTube'} в профиле
-            </p>
-          ` : ''}
-        `}
+  if (filteredMaterials.length === 0) {
+    materialsList.innerHTML = `
+      <div class="ios-card">
+        <p>Нет заданий для выбранной платформы</p>
       </div>
-    </div>
     `;
-  }).join('');
-
-  // Обработчики кнопок
-  document.querySelectorAll('.take-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const materialId = btn.dataset.id;
-      await takeMaterial(materialId);
-      displayMaterials(filterPlatform);
-    });
-  });
-
-  document.querySelectorAll('.resubmit-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const materialId = btn.dataset.id;
-      await resubmitMaterial(materialId);
-      displayMaterials(filterPlatform);
-    });
-  });
-
-  // Показываем предупреждения
-  document.querySelectorAll('.take-btn[disabled]').forEach(btn => {
-    btn.parentElement.querySelector('.platform-warning').style.display = 'block';
-  });
-}
-
-// Принять задание
-async function takeMaterial(materialId) {
-  const uid = auth.currentUser?.uid;
-  if (!uid) return;
-
-  try {
-    await set(ref(db, `users/${uid}/materials/${materialId}`), {
-      status: "in_progress",
-      timestamp: Date.now()
-    });
-    showNotification("Задание принято!");
-  } catch (error) {
-    showNotification("Ошибка принятия задания", "error");
+    return;
   }
-}
 
-// Отправить повторно
-async function resubmitMaterial(materialId) {
-  const uid = auth.currentUser?.uid;
-  if (!uid) return;
-
-  try {
-    await update(ref(db, `users/${uid}/materials/${materialId}`), {
-      status: "in_progress",
-      moderatorComment: null
-    });
-    showNotification("Задание отправлено на повторную проверку!");
-  } catch (error) {
-    showNotification("Ошибка отправки задания", "error");
-  }
-}
-
-// Загрузка профиля
-async function loadProfile() {
-  const uid = auth.currentUser?.uid;
-  if (!uid) return;
-
-  const userData = await loadUserData(uid);
-  if (!userData) return;
-
-  dynamicContent.innerHTML = `
-    <div class="ios-section">
-      <div class="profile-header">
-        <img id="profile-avatar" class="avatar" src="https://www.gravatar.com/avatar/?d=mp" alt="Аватар">
-        <h2 id="profile-name">${userData.name || "Пользователь"}</h2>
-        <div class="balance">
-          <span>Баланс:</span>
-          <strong id="profile-balance">${userData.balance || 0} ₽</strong>
-        </div>
+  materialsList.innerHTML = filteredMaterials.map(([id, material]) => `
+    <div class="ios-card material-item" data-id="${id}" data-platform="${material.platform || 'other'}">
+      <div class="material-badge ${material.platform || 'other'}">
+        ${material.platform === 'tiktok' ? '<i class="fab fa-tiktok"></i>' : 
+          material.platform === 'youtube' ? '<i class="fab fa-youtube"></i>' : ''}
       </div>
-      <div class="ios-card">
-        <h3><i class="fab fa-tiktok"></i> Привязать TikTok</h3>
-        <p id="profile-tiktok">${userData.tiktok || "Не привязан"}</p>
-        <input type="text" id="tiktok-input" placeholder="@username" class="profile-input" value="${userData.tiktok || ''}">
-        <button class="ios-button small" id="save-tiktok">
-          Сохранить
+      <h3>${material.title || 'Рекламное задание'}</h3>
+      <p>${material.description || 'Разместите рекламу в своем контенте'}</p>
+      <p><strong>Платформа:</strong> ${material.platform ? material.platform.charAt(0).toUpperCase() + material.platform.slice(1) : 'Любая'}</p>
+      <p><strong>Вознаграждение:</strong> ${material.reward || 0.1}₽ за 1к просмотров</p>
+      ${material.url ? `<p><a href="${material.url}" target="_blank" class="material-link">Ссылка на рекламные материалы</a></p>` : ''}
+      <div class="material-actions">
+        <button class="ios-button small take-btn">
+          <span class="btn-text">Принять задание</span>
+          <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
       </div>
-      <div class="ios-card">
-        <h3><i class="fab fa-youtube"></i> Привязать YouTube</h3>
-        <p id="profile-youtube">${userData.youtube || "Не привязан"}</p>
-        <input type="text" id="youtube-input" placeholder="ID канала" class="profile-input" value="${userData.youtube || ''}">
-        <button class="ios-button small" id="save-youtube">
-          Сохранить
-        </button>
-      </div>
-      <button class="ios-button danger" id="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Выйти
-      </button>
     </div>
-  `;
+  `).join('');
 
-  // Обработчики сохранения
-  document.getElementById('save-tiktok').addEventListener('click', async () => {
-    const tiktok = document.getElementById('tiktok-input').value.trim();
-    if (!tiktok) return;
-
-    try {
-      await update(ref(db, `users/${uid}`), { tiktok });
-      document.getElementById('profile-tiktok').textContent = tiktok;
-      showNotification("TikTok привязан!");
-    } catch (error) {
-      showNotification("Ошибка сохранения", "error");
-    }
-  });
-
-  document.getElementById('save-youtube').addEventListener('click', async () => {
-    const youtube = document.getElementById('youtube-input').value.trim();
-    if (!youtube) return;
-
-    try {
-      await update(ref(db, `users/${uid}`), { youtube });
-      document.getElementById('profile-youtube').textContent = youtube;
-      showNotification("YouTube привязан!");
-    } catch (error) {
-      showNotification("Ошибка сохранения", "error");
-    }
-  });
-
-  // Выход
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      showNotification("Ошибка выхода", "error");
-    }
+  // Обработчики для кнопок "Принять задание"
+  document.querySelectorAll('.take-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const btnText = this.querySelector('.btn-text');
+      const btnLoader = this.querySelector('.btn-loader');
+      
+      btnText.classList.add('hidden');
+      btnLoader.classList.remove('hidden');
+      
+      const materialId = this.closest('.material-item').dataset.id;
+      const uid = auth.currentUser?.uid;
+      
+      if (uid) {
+        try {
+          await update(ref(db, `users/${uid}/materials`), {
+            [materialId]: {
+              accepted: new Date().toISOString(),
+              status: 'in_progress',
+              platform: materials[materialId].platform,
+              reward: materials[materialId].reward,
+              title: materials[materialId].title
+            }
+          });
+          showNotification('Задание успешно принято!');
+        } catch (error) {
+          showNotification(`Ошибка: ${error.message}`, 'error');
+        } finally {
+          btnText.classList.remove('hidden');
+          btnLoader.classList.add('hidden');
+        }
+      }
+    });
   });
 }
 
 // Загрузка раздела
-function loadSection(section) {
-  const sections = {
-    main: `
-      <div class="ios-section">
-        <h2 class="ios-title">Главная</h2>
-        <div class="ios-card">
-          <h3>Добро пожаловать в Reemmy!</h3>
-          <p>Зарабатывайте на размещении рекламы в своих соцсетях</p>
-        </div>
-      </div>
-    `,
-    materials: `
-      <div class="ios-section">
-        <h2 class="ios-title">Доступные задания</h2>
-        <div class="materials-filters">
-          <button class="filter-btn active" data-platform="all">Все</button>
-          <button class="filter-btn" data-platform="tiktok">TikTok</button>
-          <button class="filter-btn" data-platform="youtube">YouTube</button>
-        </div>
-        <div class="materials-list" id="materials-list">
-          <div class="loading-placeholder">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Загрузка заданий...</p>
-          </div>
-        </div>
-      </div>
-    `,
-    profile: `
-      <div class="ios-section">
-        <div class="loading-placeholder">
-          <i class="fas fa-spinner fa-spin"></i>
-          <p>Загрузка профиля...</p>
-        </div>
-      </div>
-    `
-  };
-
-  dynamicContent.innerHTML = sections[section];
+async function loadSection(sectionId, uid) {
+  dynamicContent.innerHTML = sections[sectionId];
   
-  if (section === 'materials') {
-    displayMaterials();
-  } else if (section === 'profile') {
-    loadProfile();
-  }
-}
-
-// Обработчики вкладок
-function setupTabButtons() {
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      loadSection(btn.dataset.section);
-    });
+  // Обновляем активную кнопку
+  tabButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === sectionId);
   });
-}
-
-// Обработчик входа
-async function handleLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (error) {
-    showNotification("Неверный email или пароль", "error");
+  
+  // Загружаем специфичные данные
+  if (sectionId === 'profile' && uid) {
+    const userData = await loadUserData(uid);
+    if (userData) {
+      document.getElementById('profile-name').textContent = userData.name;
+      document.getElementById('profile-balance').textContent = `${userData.balance || 0} ₽`;
+      document.getElementById('profile-tiktok').textContent = userData.tiktok || "Не указан";
+      document.getElementById('profile-youtube').textContent = userData.youtube || "Не указан";
+      
+      // Обработчики для сохранения соцсетей
+      document.getElementById('save-tiktok').addEventListener('click', async () => {
+        const btn = document.getElementById('save-tiktok');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+        
+        const tiktok = document.getElementById('tiktok-input').value;
+        if (tiktok) {
+          try {
+            await saveUserData(uid, { tiktok });
+            document.getElementById('profile-tiktok').textContent = tiktok;
+            showNotification('TikTok сохранен!');
+          } catch (error) {
+            showNotification(`Ошибка: ${error.message}`, 'error');
+          } finally {
+            btnText.classList.remove('hidden');
+            btnLoader.classList.add('hidden');
+          }
+        }
+      });
+      
+      document.getElementById('save-youtube').addEventListener('click', async () => {
+        const btn = document.getElementById('save-youtube');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+        
+        const youtube = document.getElementById('youtube-input').value;
+        if (youtube) {
+          try {
+            await saveUserData(uid, { youtube });
+            document.getElementById('profile-youtube').textContent = youtube;
+            showNotification('YouTube сохранен!');
+          } catch (error) {
+            showNotification(`Ошибка: ${error.message}`, 'error');
+          } finally {
+            btnText.classList.remove('hidden');
+            btnLoader.classList.add('hidden');
+          }
+        }
+      });
+      
+      // Выход из аккаунта
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        if (confirm('Точно хотите выйти?')) {
+          signOut(auth);
+        }
+      });
+      
+      document.getElementById('logout-btn-top').addEventListener('click', () => {
+        if (confirm('Точно хотите выйти?')) {
+          signOut(auth);
+        }
+      });
+    }
+  }
+  
+  if (sectionId === 'materials') {
+    await displayMaterials();
+    
+    // Обработчики для фильтров
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        displayMaterials(this.dataset.platform);
+      });
+    });
   }
 }
 
-// Обработчик регистрации
-async function handleSignup(e) {
+// Инициализация
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const uid = auth.currentUser?.uid;
+    if (uid) loadSection(btn.dataset.section, uid);
+  });
+});
+
+// Авторизация
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    authScreen.classList.add('hidden');
+    appScreen.classList.remove('hidden');
+    loadSection('main', user.uid);
+  } else {
+    authScreen.classList.remove('hidden');
+    appScreen.classList.add('hidden');
+  }
+});
+
+// Регистрация
+signupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  
   const name = document.getElementById('signup-name').value;
   const email = document.getElementById('signup-email').value;
   const password = document.getElementById('signup-password').value;
-
+  
+  const submitBtn = signupForm.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+  
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, { displayName: name });
-    await set(ref(db, `users/${userCredential.user.uid}`), {
+    
+    const userData = {
+      ...userDataTemplate,
       name,
-      email,
-      balance: 0,
-      tiktok: "",
-      youtube: ""
-    });
-    showNotification("Регистрация успешна!");
+      email
+    };
+    
+    await set(ref(db, `users/${userCredential.user.uid}`), userData);
+    showNotification('Регистрация успешна! Теперь вы можете войти.');
+    signupForm.reset();
   } catch (error) {
-    showNotification("Ошибка регистрации", "error");
+    showNotification(`Ошибка регистрации: ${error.message}`, 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Зарегистрироваться';
   }
-}
+});
 
-// Инициализация приложения
-window.addEventListener('DOMContentLoaded', () => {
-  initApp();
-  setupTabButtons();
+// Вход
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  
+  const submitBtn = loginForm.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+  
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    showNotification(`Ошибка входа: ${error.message}`, 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Войти';
+  }
+});
+
+// Переключение между вкладками входа и регистрации
+document.getElementById('login-tab').addEventListener('click', () => {
+  document.getElementById('login-form').classList.remove('hidden');
+  document.getElementById('signup-form').classList.add('hidden');
+  document.getElementById('login-tab').classList.add('active');
+  document.getElementById('signup-tab').classList.remove('active');
+});
+
+document.getElementById('signup-tab').addEventListener('click', () => {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('signup-form').classList.remove('hidden');
+  document.getElementById('login-tab').classList.remove('active');
+  document.getElementById('signup-tab').classList.add('active');
 });
