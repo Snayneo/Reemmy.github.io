@@ -5,8 +5,6 @@ import {
   set,
   get,
   update,
-  push,
-  child,
   remove,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -30,7 +28,7 @@ const userDataTemplate = {
   email: "",
   tiktok: "",
   youtube: "",
-  avatar: "",
+  avatar: "https://i.ibb.co/7QZKSnC/default-avatar.png",
   balance: 0,
   rewards: {},
   materials: {}
@@ -166,17 +164,6 @@ async function loadMaterials() {
   } catch (error) {
     console.error("Ошибка загрузки материалов:", error);
     showNotification("Ошибка загрузки заданий", "error");
-    return null;
-  }
-}
-
-// Загрузка комментариев к заданию
-async function loadComments(materialId, userId) {
-  try {
-    const snapshot = await get(ref(db, `materials/${materialId}/comments/${userId}`));
-    return snapshot.exists() ? snapshot.val() : null;
-  } catch (error) {
-    console.error("Ошибка загрузки комментариев:", error);
     return null;
   }
 }
@@ -335,14 +322,6 @@ async function displayMaterials(filterPlatform = 'all') {
     });
   });
 
-  // Обработчики для кнопок "Отправить на проверку"
-  document.querySelectorAll('.review-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const materialId = this.dataset.id;
-      openCommentModal(materialId);
-    });
-  });
-
   // Обработчики фильтров
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -350,106 +329,6 @@ async function displayMaterials(filterPlatform = 'all') {
       this.classList.add('active');
       displayMaterials(this.dataset.platform);
     });
-  });
-}
-
-// Модальное окно для комментариев
-let currentMaterialId = null;
-let screenshotUrl = null;
-
-function openCommentModal(materialId) {
-  currentMaterialId = materialId;
-  screenshotUrl = null;
-  
-  document.getElementById('comment-text').value = '';
-  document.getElementById('screenshot-preview').innerHTML = '';
-  document.getElementById('screenshot-preview').classList.add('hidden');
-  
-  const modal = document.getElementById('comment-modal');
-  modal.classList.remove('hidden');
-}
-
-function closeCommentModal() {
-  const modal = document.getElementById('comment-modal');
-  modal.classList.add('hidden');
-}
-
-// Инициализация модального окна
-function initCommentModal() {
-  const modal = document.getElementById('comment-modal');
-  const closeBtn = document.querySelector('.close-modal');
-  const submitBtn = document.getElementById('submit-review');
-  const screenshotInput = document.getElementById('screenshot-upload');
-  const screenshotPreview = document.getElementById('screenshot-preview');
-  
-  closeBtn.addEventListener('click', closeCommentModal);
-  
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      closeCommentModal();
-    }
-  });
-  
-  screenshotInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка изображения...';
-        
-        const url = await uploadImageToImgBB(file);
-        screenshotUrl = url;
-        
-        screenshotPreview.innerHTML = `<img src="${url}" alt="Скриншот">`;
-        screenshotPreview.classList.remove('hidden');
-        
-        showNotification('Изображение успешно загружено');
-      } catch (error) {
-        showNotification('Ошибка загрузки изображения', 'error');
-        console.error(error);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Отправить на проверку';
-      }
-    }
-  });
-  
-  submitBtn.addEventListener('click', async () => {
-    const comment = document.getElementById('comment-text').value;
-    const uid = auth.currentUser?.uid;
-    
-    if (!comment) {
-      showNotification('Пожалуйста, оставьте комментарий', 'error');
-      return;
-    }
-    
-    try {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-      
-      const reviewData = {
-        comment,
-        screenshot: screenshotUrl || '',
-        date: new Date().toISOString(),
-        status: 'pending'
-      };
-      
-      await update(ref(db, `users/${uid}/materials/${currentMaterialId}`), {
-        status: 'review'
-      });
-      
-      await set(ref(db, `materials/${currentMaterialId}/comments/${uid}`), reviewData);
-      
-      showNotification('Задание отправлено на проверку!');
-      closeCommentModal();
-      displayMaterials();
-    } catch (error) {
-      showNotification(`Ошибка: ${error.message}`, 'error');
-      console.error(error);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Отправить на проверку';
-    }
   });
 }
 
@@ -675,9 +554,6 @@ async function loadSection(sectionId, uid) {
 
 // Инициализация приложения
 function initApp() {
-  // Инициализация модального окна для комментариев
-  initCommentModal();
-  
   // Обработчики вкладок
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -701,7 +577,7 @@ function initApp() {
     }
   });
   
-  // Обработчик формы регистрации
+  // Обработчик формы регистрации (исправленный)
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('signup-name').value;
@@ -709,10 +585,16 @@ function initApp() {
     const password = document.getElementById('signup-password').value;
     
     try {
+      // Создаем пользователя в Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Сохраняем дополнительные данные пользователя
+      // Обновляем отображаемое имя пользователя
+      await updateProfile(user, {
+        displayName: name
+      });
+      
+      // Создаем запись пользователя в Realtime Database
       const userData = {
         ...userDataTemplate,
         name,
@@ -722,16 +604,15 @@ function initApp() {
       
       await set(ref(db, `users/${user.uid}`), userData);
       
-      // Обновляем профиль в Firebase Auth
-      await updateProfile(user, {
-        displayName: name
-      });
-      
       showNotification('Регистрация прошла успешно!');
+      
+      // Очищаем форму
+      signupForm.reset();
       
       // Переключаемся на вкладку входа
       document.getElementById('login-tab').click();
     } catch (error) {
+      console.error('Ошибка регистрации:', error);
       showNotification(`Ошибка регистрации: ${error.message}`, 'error');
     }
   });
