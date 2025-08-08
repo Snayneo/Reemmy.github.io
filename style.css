@@ -694,3 +694,35 @@ body {
     height: 80px;
   }
 }
+/* Добавьте эти стили в конец файла */
+
+/* Модерация */
+.moderator-comment {
+  background-color: #FFF0F0;
+  border-left: 3px solid var(--ios-red);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+}
+
+.moderator-comment p {
+  margin-bottom: 5px;
+}
+
+.rejected-status {
+  color: var(--ios-red);
+  font-weight: bold;
+}
+
+.resubmit-btn {
+  background-color: var(--ios-red) !important;
+  margin-top: 10px;
+}
+
+.platform-warning {
+  color: var(--ios-red);
+  font-size: 14px;
+  margin-top: 10px;
+  display: none;
+}
