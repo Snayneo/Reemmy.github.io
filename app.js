@@ -67,7 +67,7 @@ const sections = {
     <div class="ios-section">
       <h2 class="ios-title">Доступные задания</h2>
       <div class="materials-filters">
-        <button class="filter-btn filter-btn-all active" data-platform="all">Все</button>
+        <button class="filter-btn active" data-platform="all">Все</button>
         <button class="filter-btn" data-platform="tiktok">TikTok</button>
         <button class="filter-btn" data-platform="youtube">YouTube</button>
       </div>
@@ -103,14 +103,10 @@ const sections = {
         <h2 id="profile-name">Загрузка...</h2>
         <div class="balance-block">
           <div class="balance-info">
-            <div class="balance-row">
-              <span>Баланс:</span>
-              <strong id="profile-balance">0 ₽</strong>
-            </div>
-            <div class="total-earned-row">
-              <span class="total-earned-label">Всего заработано:</span>
-              <strong id="profile-total-earned">0 ₽</strong>
-            </div>
+            <span>Баланс:</span>
+            <strong id="profile-balance">0 ₽</strong>
+            <span class="total-earned-label">Всего заработано:</span>
+            <strong id="profile-total-earned">0 ₽</strong>
           </div>
           <button class="ios-button small" id="withdraw-btn">Вывести</button>
         </div>
@@ -578,7 +574,7 @@ function showWithdrawModal(amount, callback) {
   const modal = document.getElementById('withdraw-modal');
   const closeBtn = modal.querySelector('.close-modal');
   const methodBtns = modal.querySelectorAll('.withdraw-method-btn');
-  const withdrawDetails = modal.querySelector('#withdraw-details');
+  const withdrawDetails = document.querySelector('#withdraw-details');
   const walletInput = modal.querySelector('#wallet-input');
   const confirmBtn = modal.querySelector('#confirm-withdraw');
 
