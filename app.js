@@ -152,13 +152,24 @@ function showNotification(message, type = 'success') {
 
 // Загрузка данных пользователя
 async function loadUserData(uid) {
-  const snapshot = await get(ref(db, `users/${uid}`));
-  return snapshot.exists() ? snapshot.val() : null;
+  try {
+    const snapshot = await get(ref(db, `users/${uid}`));
+    return snapshot.exists() ? snapshot.val() : null;
+  } catch (error) {
+    console.error('Ошибка загрузки данных пользователя:', error);
+    showNotification('Ошибка загрузки данных профиля', 'error');
+    return null;
+  }
 }
 
 // Сохранение данных пользователя
 async function saveUserData(uid, data) {
-  await update(ref(db, `users/${uid}`), data);
+  try {
+    await update(ref(db, `users/${uid}`), data);
+  } catch (error) {
+    console.error('Ошибка сохранения данных:', error);
+    throw new Error('Не удалось сохранить данные');
+  }
 }
 
 // Загрузка материалов из Firebase
@@ -188,7 +199,10 @@ async function loadMaterials() {
 // Отображение материалов
 async function displayMaterials() {
   const materialsList = document.getElementById('materials-list');
-  if (!materialsList) return;
+  if (!materialsList) {
+    console.error('Элемент materials-list не найден');
+    return;
+  }
 
   materialsList.innerHTML = '<div class="loading-placeholder"><i class="fas fa-spinner fa-spin"></i><p>Загрузка заданий...</p></div>';
 
@@ -200,8 +214,19 @@ async function displayMaterials() {
       return;
     }
 
+    // Проверка, какие задания уже взяты пользователем
+    const user = auth.currentUser;
+    let userData = null;
+    let userMaterials = {};
+    if (user) {
+      userData = await loadUserData(user.uid);
+      userMaterials = userData?.materials || {};
+    }
+
     let html = '';
     materials.forEach(material => {
+      const isTaken = userMaterials[material.id]?.status === 'in_progress';
+      const isPendingReview = userMaterials[material.id]?.status === 'pending_review';
       html += `
         <div class="ios-card material-item">
           <div class="material-badge ${material.platform}">
@@ -219,10 +244,18 @@ async function displayMaterials() {
             </p>
           </div>
           <div class="material-actions">
-            <button class="ios-button take-btn" data-material-id="${material.id}">
-              <span class="btn-text">Взять задание</span>
+            <button class="ios-button ${isTaken ? 'in-progress-btn' : isPendingReview ? 'pending-review-btn' : 'take-btn'}" 
+                    data-material-id="${material.id}" 
+                    ${isTaken || isPendingReview ? 'disabled' : ''}>
+              <span class="btn-text">${isPendingReview ? 'На рассмотрении' : isTaken ? 'В процессе' : 'Взять задание'}</span>
               <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
             </button>
+            ${isTaken && !isPendingReview ? `
+              <button class="ios-button submit-review-btn" data-material-id="${material.id}">
+                <span class="btn-text">Отправить на рассмотрение</span>
+                <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+              </button>
+            ` : ''}
           </div>
         </div>
       `;
@@ -238,13 +271,26 @@ async function displayMaterials() {
         
         btnText.classList.add('hidden');
         btnLoader.classList.remove('hidden');
-        
+        btn.disabled = true;
+
         try {
           const user = auth.currentUser;
           if (!user) {
             throw new Error('Пользователь не авторизован');
           }
-          
+
+          // Проверка существования материала
+          const materialSnapshot = await get(ref(db, `Materials/${materialId}`));
+          if (!materialSnapshot.exists()) {
+            throw new Error('Задание не найдено');
+          }
+
+          // Проверка, не взято ли задание
+          const userMaterialSnapshot = await get(ref(db, `users/${user.uid}/materials/${materialId}`));
+          if (userMaterialSnapshot.exists() && userMaterialSnapshot.val().status === 'in_progress') {
+            throw new Error('Задание уже взято');
+          }
+
           await update(ref(db, `users/${user.uid}/materials/${materialId}`), {
             status: 'in_progress',
             takenAt: new Date().toISOString()
@@ -254,12 +300,77 @@ async function displayMaterials() {
           btnText.textContent = 'В процессе';
           btn.classList.add('in-progress-btn');
           btn.classList.remove('take-btn');
+          // Перезагрузка раздела для отображения кнопки "Отправить на рассмотрение"
+          displayMaterials();
         } catch (error) {
           console.error('Ошибка при взятии задания:', error);
           showNotification(`Ошибка: ${error.message}`, 'error');
         } finally {
           btnText.classList.remove('hidden');
           btnLoader.classList.add('hidden');
+          btn.disabled = false;
+        }
+      });
+    });
+
+    document.querySelectorAll('.submit-review-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const materialId = this.dataset.materialId;
+        const btnText = this.querySelector('.btn-text');
+        const btnLoader = this.querySelector('.btn-loader');
+        
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+        btn.disabled = true;
+
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            throw new Error('Пользователь не авторизован');
+          }
+
+          // Проверка существования материала
+          const materialSnapshot = await get(ref(db, `Materials/${materialId}`));
+          if (!materialSnapshot.exists()) {
+            throw new Error('Задание не найдено');
+          }
+
+          const material = materialSnapshot.val();
+          const userData = await loadUserData(user.uid);
+          const platform = material.platform;
+
+          // Проверка привязки социальной сети
+          if (platform === 'tiktok' && (!userData.tiktok || userData.tiktok === 'Не указан')) {
+            throw new Error('Привяжите аккаунт TikTok в профиле');
+          }
+          if (platform === 'youtube' && (!userData.youtube || userData.youtube === 'Не указан')) {
+            throw new Error('Привяжите аккаунт YouTube в профиле');
+          }
+
+          // Проверка статуса задания
+          const userMaterialSnapshot = await get(ref(db, `users/${user.uid}/materials/${materialId}`));
+          if (!userMaterialSnapshot.exists() || userMaterialSnapshot.val().status !== 'in_progress') {
+            throw new Error('Задание не находится в процессе выполнения');
+          }
+
+          await update(ref(db, `users/${user.uid}/materials/${materialId}`), {
+            status: 'pending_review',
+            submittedAt: new Date().toISOString()
+          });
+          
+          showNotification('Задание отправлено на рассмотрение!');
+          btnText.textContent = 'На рассмотрении';
+          btn.classList.add('pending-review-btn');
+          btn.classList.remove('submit-review-btn');
+          // Перезагрузка раздела для обновления интерфейса
+          displayMaterials();
+        } catch (error) {
+          console.error('Ошибка при отправке на рассмотрение:', error);
+          showNotification(`Ошибка: ${error.message}`, 'error');
+        } finally {
+          btnText.classList.remove('hidden');
+          btnLoader.classList.add('hidden');
+          btn.disabled = false;
         }
       });
     });
@@ -303,6 +414,7 @@ async function displayStats(uid) {
 
     let completedCount = 0;
     let inProgressCount = 0;
+    let pendingReviewCount = 0;
     let totalEarnings = 0;
     
     Object.values(userData.materials).forEach(material => {
@@ -311,6 +423,8 @@ async function displayStats(uid) {
         totalEarnings += material.earnings || 0;
       } else if (material.status === 'in_progress') {
         inProgressCount++;
+      } else if (material.status === 'pending_review') {
+        pendingReviewCount++;
       }
     });
 
@@ -323,6 +437,10 @@ async function displayStats(uid) {
         <div class="stat-card">
           <h3>В процессе</h3>
           <p>${inProgressCount}</p>
+        </div>
+        <div class="stat-card">
+          <h3>На рассмотрении</h3>
+          <p>${pendingReviewCount}</p>
         </div>
         <div class="stat-card">
           <h3>Заработано</h3>
@@ -341,8 +459,8 @@ async function displayStats(uid) {
                 <p>${material.platform === 'tiktok' ? 'TikTok' : 'YouTube'}</p>
               </div>
               <div class="task-status">
-                <span class="status-badge ${material.status === 'completed' ? 'completed' : ''}">
-                  ${material.status === 'completed' ? 'Выполнено' : 'В процессе'}
+                <span class="status-badge ${material.status === 'completed' ? 'completed' : material.status === 'pending_review' ? 'pending-review' : ''}">
+                  ${material.status === 'completed' ? 'Выполнено' : material.status === 'pending_review' ? 'На рассмотрении' : 'В процессе'}
                 </span>
               </div>
             </div>
@@ -456,7 +574,7 @@ function showWithdrawModal(amount, callback) {
   const modal = document.getElementById('withdraw-modal');
   const closeBtn = modal.querySelector('.close-modal');
   const methodBtns = modal.querySelectorAll('.withdraw-method-btn');
-  const withdrawDetails = modal.querySelector('#withdraw-details');
+  const withdrawDetails = document.querySelector('#withdraw-details');
   const walletInput = modal.querySelector('#wallet-input');
   const confirmBtn = modal.querySelector('#confirm-withdraw');
 
