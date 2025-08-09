@@ -9,45 +9,45 @@
 </head>
 <body class="ios-style">
   <!-- Notification -->
-  <div id="notification" class="notification hidden"></div>
+  <div id="notification" class="notification hidden" role="alert" aria-live="polite"></div>
 
   <!-- Auth Screen -->
   <div id="auth-screen">
     <div class="auth-container">
       <div class="logo-container">
-        <div class="logo-text">Reemmy</div>
+        <div class="logo-text" aria-label="Логотип Reemmy">Reemmy</div>
         <p>Зарабатывайте на рекламе</p>
       </div>
       
-      <div class="auth-tabs">
-        <div class="auth-tab active" id="login-tab">Вход</div>
-        <div class="auth-tab" id="signup-tab">Регистрация</div>
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="login-tab" type="button" role="tab" aria-selected="true" aria-controls="login-form">Вход</button>
+        <button class="auth-tab" id="signup-tab" type="button" role="tab" aria-selected="false" aria-controls="signup-form">Регистрация</button>
       </div>
       
-      <form id="login-form">
+      <form id="login-form" autocomplete="on" novalidate aria-labelledby="login-tab">
         <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input type="email" id="login-email" placeholder="Email" required>
+          <input type="email" id="login-email" placeholder="Email" required autocomplete="email">
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="login-password" placeholder="Пароль" required>
+          <input type="password" id="login-password" placeholder="Пароль" required autocomplete="current-password">
         </div>
         <button type="submit" class="ios-button">Войти</button>
       </form>
       
-      <form id="signup-form" class="hidden">
+      <form id="signup-form" class="hidden" autocomplete="on" novalidate aria-labelledby="signup-tab">
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input type="text" id="signup-name" placeholder="Ваше имя" required>
+          <input type="text" id="signup-name" placeholder="Ваше имя" required autocomplete="name">
         </div>
         <div class="input-group">
           <i class="fas fa-envelope"></i>
-          <input type="email" id="signup-email" placeholder="Email" required>
+          <input type="email" id="signup-email" placeholder="Email" required autocomplete="email">
         </div>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" id="signup-password" placeholder="Пароль" required>
+          <input type="password" id="signup-password" placeholder="Пароль" required autocomplete="new-password">
         </div>
         <button type="submit" class="ios-button">Зарегистрироваться</button>
       </form>
@@ -57,24 +57,24 @@
   <!-- Main App Screen -->
   <div id="app-screen" class="hidden">
     <div class="content" id="dynamic-content">
-      <!-- Content will be loaded dynamically -->
+      <!-- Контент подгружается динамически через app.js -->
     </div>
 
     <!-- iOS Style Tab Bar -->
-    <nav class="ios-tabbar">
-      <button class="tab-btn active" data-section="main">
+    <nav class="ios-tabbar" aria-label="Навигация по разделам">
+      <button class="tab-btn active" data-section="main" type="button" title="Главная">
         <i class="fas fa-home"></i>
         <span>Главная</span>
       </button>
-      <button class="tab-btn" data-section="materials">
+      <button class="tab-btn" data-section="materials" type="button" title="Задания">
         <i class="fas fa-ad"></i>
         <span>Задания</span>
       </button>
-      <button class="tab-btn" data-section="stats">
+      <button class="tab-btn" data-section="stats" type="button" title="Статистика">
         <i class="fas fa-chart-line"></i>
         <span>Статистика</span>
       </button>
-      <button class="tab-btn" data-section="profile">
+      <button class="tab-btn" data-section="profile" type="button" title="Профиль">
         <i class="fas fa-user"></i>
         <span>Профиль</span>
       </button>
